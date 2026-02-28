@@ -7,98 +7,163 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0d0d0d; --surface: #181818; --surface2: #242424;
-      --accent: #e50914; --text: #f0f0f0; --muted: #888; --radius: 10px;
+      --bg: #0b0916; --surface: #13112a; --surface2: #1c1a38;
+      --accent: #a855f7; --accent2: #06d6a0; --accent3: #f472b6;
+      --text: #f0eeff; --muted: #9b93c4; --radius: 10px;
     }
     body { background: var(--bg); color: var(--text); font-family: "Segoe UI", system-ui, sans-serif; min-height: 100vh; }
-    nav { position:sticky; top:0; z-index:100; background:rgba(13,13,13,.92); backdrop-filter:blur(12px); padding:16px 40px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,.05); }
-    .logo { font-size:1.6rem; font-weight:800; letter-spacing:-.5px; color:var(--accent); }
-    .logo span { color:var(--text); }
-    .hero { text-align:center; padding:68px 20px 44px; }
-    .hero h1 { font-size:clamp(1.8rem,5vw,2.9rem); font-weight:800; margin-bottom:12px; line-height:1.2; }
-    .hero p { color:var(--muted); font-size:1.05rem; margin-bottom:30px; }
-    .search-wrap { display:flex; max-width:560px; margin:0 auto; background:var(--surface); border:1.5px solid rgba(255,255,255,.1); border-radius:50px; overflow:hidden; transition:border-color .2s; }
-    .search-wrap:focus-within { border-color:var(--accent); }
+
+    /* ── NAV ── */
+    nav {
+      position:sticky; top:0; z-index:100;
+      background:rgba(11,9,22,.88); backdrop-filter:blur(16px);
+      padding:14px 40px; display:flex; align-items:center; justify-content:space-between;
+      border-bottom:1px solid rgba(168,85,247,.15);
+    }
+    .logo {
+      font-size:1.6rem; font-weight:900; letter-spacing:-.5px;
+      background:linear-gradient(90deg,#a855f7,#06d6a0);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    }
+    .logo span { font-weight:400; }
+
+    /* ── HERO ── */
+    .hero {
+      text-align:center; padding:72px 20px 48px; position:relative; overflow:hidden;
+    }
+    .hero::before {
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background:
+        radial-gradient(ellipse at 20% 60%, rgba(168,85,247,.22) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 30%, rgba(6,214,160,.16) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 100%, rgba(244,114,182,.12) 0%, transparent 50%);
+    }
+    .hero h1 { font-size:clamp(2rem,5vw,3.2rem); font-weight:900; margin-bottom:14px; line-height:1.15; position:relative; }
+    .hero h1 em { font-style:normal; background:linear-gradient(90deg,#a855f7,#06d6a0); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .hero p { color:var(--muted); font-size:1.05rem; margin-bottom:32px; position:relative; }
+
+    .search-wrap {
+      display:flex; max-width:580px; margin:0 auto; position:relative;
+      background:rgba(255,255,255,.06); border:1.5px solid rgba(168,85,247,.35);
+      border-radius:50px; overflow:hidden; transition:border-color .2s, box-shadow .2s;
+    }
+    .search-wrap:focus-within { border-color:var(--accent); box-shadow:0 0 0 3px rgba(168,85,247,.15); }
     .search-wrap input { flex:1; background:transparent; border:none; outline:none; color:var(--text); font-size:1rem; padding:14px 20px; }
     .search-wrap input::placeholder { color:var(--muted); }
-    .search-wrap button { background:var(--accent); border:none; padding:0 24px; color:#fff; font-weight:700; font-size:.9rem; cursor:pointer; transition:background .2s; white-space:nowrap; }
-    .search-wrap button:hover { background:#c40812; }
+    .search-wrap button {
+      background:linear-gradient(135deg,#a855f7,#7c3aed); border:none; padding:0 26px;
+      color:#fff; font-weight:700; font-size:.9rem; cursor:pointer; transition:opacity .2s; white-space:nowrap;
+    }
+    .search-wrap button:hover { opacity:.85; }
+
+    /* ── FILTER BAR ── */
     .filter-bar { display:flex; gap:8px; flex-wrap:wrap; max-width:1380px; margin:28px auto 0; padding:0 24px; }
-    .filter-btn { border:1px solid rgba(255,255,255,.12); background:var(--surface); border-radius:50px; padding:7px 16px; font-size:.8rem; cursor:pointer; color:#ccc; transition:all .15s; white-space:nowrap; display:flex; align-items:center; gap:6px; }
-    .filter-btn:hover, .filter-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+    .filter-btn {
+      border:1px solid rgba(255,255,255,.1); background:var(--surface);
+      border-radius:50px; padding:7px 16px; font-size:.8rem; cursor:pointer;
+      color:#bbb; transition:all .15s; white-space:nowrap; display:flex; align-items:center; gap:6px;
+    }
+    .filter-btn:hover { border-color:rgba(168,85,247,.5); color:#fff; background:rgba(168,85,247,.12); }
+    .filter-btn.active { background:linear-gradient(135deg,#a855f7,#7c3aed); border-color:transparent; color:#fff; box-shadow:0 2px 12px rgba(168,85,247,.4); }
+
+    /* ── MAIN ── */
     main { padding:32px 24px 80px; max-width:1380px; margin:0 auto; }
-    .section-title { font-size:1.25rem; font-weight:700; margin-bottom:18px; display:flex; align-items:center; gap:10px; }
-    .section-title::after { content:""; flex:1; height:1px; background:rgba(255,255,255,.07); }
-    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:16px; }
-    .card { background:var(--surface); border-radius:var(--radius); overflow:hidden; cursor:pointer; transition:transform .2s,box-shadow .2s; }
-    .card:hover { transform:translateY(-6px) scale(1.02); box-shadow:0 18px 44px rgba(0,0,0,.75); }
-    .card-poster { aspect-ratio:2/3; position:relative; overflow:hidden; }
-    .card-poster-bg { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
-    .genre-icon { font-size:4rem; opacity:.18; }
-    .card-poster-gradient { position:absolute; bottom:0; left:0; right:0; height:50%; background:linear-gradient(transparent,rgba(0,0,0,.8)); }
+    .section-title { font-size:1.25rem; font-weight:700; margin-bottom:18px; display:flex; align-items:center; gap:10px; color:var(--text); }
+    .section-title::after { content:""; flex:1; height:1px; background:linear-gradient(90deg,rgba(168,85,247,.3),transparent); }
+
+    /* ── GRID ── */
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:16px; }
+
+    /* ── CARD ── */
+    .card { background:var(--surface); border-radius:var(--radius); overflow:hidden; cursor:pointer; transition:transform .2s,box-shadow .2s; border:1px solid rgba(255,255,255,.05); }
+    .card:hover { transform:translateY(-6px) scale(1.02); box-shadow:0 18px 40px rgba(0,0,0,.7), 0 0 0 1px rgba(168,85,247,.25); }
+    .card-poster { aspect-ratio:2/3; position:relative; overflow:hidden; background:#0f0d20; }
+    .card-poster-bg { position:absolute; inset:0; }
+    .card-poster img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s; }
+    .card:hover .card-poster img { transform:scale(1.04); }
+    .card-poster-gradient { position:absolute; bottom:0; left:0; right:0; height:55%; background:linear-gradient(transparent,rgba(8,6,22,.9)); pointer-events:none; }
     .card .card-info { padding:10px 12px 12px; }
-    .card .card-title { font-size:.85rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    .card .card-meta { font-size:.72rem; color:var(--muted); margin-top:3px; display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
-    .platform-pill { display:inline-block; border-radius:4px; padding:2px 6px; font-size:.65rem; font-weight:700; letter-spacing:.3px; }
+    .card .card-title { font-size:.84rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text); }
+    .card .card-meta { font-size:.72rem; color:var(--muted); margin-top:3px; display:flex; gap:5px; flex-wrap:wrap; align-items:center; }
+
+    .platform-pill { display:inline-block; border-radius:4px; padding:2px 6px; font-size:.63rem; font-weight:700; letter-spacing:.3px; }
     .pl-netflix{background:#e50914;color:#fff} .pl-max{background:#002be7;color:#fff} .pl-disney{background:#0f3fa6;color:#fff}
-    .pl-prime{background:#00a8e0;color:#fff} .pl-apple{background:#444;color:#fff} .pl-viaplay{background:#7b2d8b;color:#fff}
-    .pl-cmore{background:#d4001e;color:#fff} .pl-sky{background:#0070d2;color:#fff} .pl-svtplay{background:#316097;color:#fff}
-    .pl-tv4play{background:#e8000d;color:#fff}
+    .pl-prime{background:#00a8e0;color:#000} .pl-apple{background:#3a3a3a;color:#fff} .pl-viaplay{background:#7b2d8b;color:#fff}
+    .pl-cmore{background:#d4001e;color:#fff} .pl-sky{background:#0070d2;color:#fff} .pl-svtplay{background:#2d7ab5;color:#fff}
+    .pl-tv4play{background:#e8000d;color:#fff} .pl-paramount{background:#1155b8;color:#fff}
+
+    /* ── EMPTY ── */
     .empty-state { grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--muted); }
     .empty-state .big { font-size:3rem; margin-bottom:12px; }
-    .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.8); backdrop-filter:blur(8px); z-index:200; align-items:center; justify-content:center; padding:20px; }
+
+    /* ── MODAL OVERLAY ── */
+    .overlay { display:none; position:fixed; inset:0; background:rgba(5,4,16,.85); backdrop-filter:blur(10px); z-index:200; align-items:center; justify-content:center; padding:20px; }
     .overlay.open { display:flex; }
-    .modal { background:var(--surface); border-radius:16px; max-width:620px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 30px 80px rgba(0,0,0,.9); animation:popIn .22s cubic-bezier(.34,1.56,.64,1); position:relative; }
+    .modal { background:var(--surface); border-radius:18px; max-width:640px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 30px 80px rgba(0,0,0,.95), 0 0 0 1px rgba(168,85,247,.2); animation:popIn .22s cubic-bezier(.34,1.56,.64,1); position:relative; }
     @keyframes popIn { from{opacity:0;transform:scale(.9)} to{opacity:1;transform:scale(1)} }
-    .modal-banner { height:180px; position:relative; overflow:hidden; }
+
+    /* ── MODAL BANNER ── */
+    .modal-banner { height:220px; position:relative; overflow:hidden; }
     .modal-banner-bg { position:absolute; inset:0; }
-    .modal-banner .genre-icon-big { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:7rem; opacity:.12; pointer-events:none; }
-    .modal-banner-gradient { position:absolute; bottom:0; left:0; right:0; height:80%; background:linear-gradient(transparent,var(--surface)); }
-    .close-btn { position:absolute; top:14px; right:14px; z-index:10; background:rgba(0,0,0,.55); border:none; color:#fff; width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; transition:background .2s; }
+    .modal-banner img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top; }
+    .modal-banner-gradient { position:absolute; bottom:0; left:0; right:0; height:85%; background:linear-gradient(transparent,var(--surface)); pointer-events:none; }
+
+    .close-btn { position:absolute; top:14px; right:14px; z-index:10; background:rgba(0,0,0,.6); border:none; color:#fff; width:34px; height:34px; border-radius:50%; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; transition:background .2s; }
     .close-btn:hover { background:var(--accent); }
+
     .modal-body { padding:24px; }
     .modal-body h2 { font-size:1.5rem; font-weight:800; margin-bottom:6px; }
     .modal-badges { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
     .badge { background:var(--surface2); border-radius:50px; padding:4px 12px; font-size:.75rem; color:#ccc; }
-    .badge.year { background:rgba(229,9,20,.15); color:#ff6b6b; }
-    .modal-desc { font-size:.875rem; color:#bbb; line-height:1.75; margin-bottom:24px; }
+    .badge.year { background:rgba(168,85,247,.2); color:#c084fc; }
+    .modal-desc { font-size:.875rem; color:#c5bde8; line-height:1.75; margin-bottom:24px; }
     .streaming-section h3 { font-size:.8rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:14px; }
     .provider-grid { display:flex; flex-wrap:wrap; gap:12px; }
-    .provider-card { background:var(--surface2); border-radius:10px; padding:12px 18px; display:flex; align-items:center; gap:10px; min-width:140px; }
+    .provider-card {
+      background:var(--surface2); border-radius:10px; padding:12px 18px;
+      display:flex; align-items:center; gap:10px; min-width:150px;
+      border:1px solid rgba(255,255,255,.06);
+    }
     .provider-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
     .provider-name { font-size:.85rem; font-weight:600; }
     .provider-type { font-size:.72rem; color:var(--muted); }
     .not-available { background:var(--surface2); border-radius:var(--radius); padding:22px; text-align:center; color:var(--muted); font-size:.9rem; }
-    ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
-    @media(max-width:500px){ nav{padding:14px 16px} .hero{padding:44px 16px 28px} .filter-bar{padding:0 14px} main{padding:24px 14px 60px} .grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px} }
+
+    ::-webkit-scrollbar{width:6px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:#3a2f6a;border-radius:3px}
+    @media(max-width:500px){ nav{padding:12px 16px} .hero{padding:44px 16px 28px} .filter-bar{padding:0 14px} main{padding:24px 14px 60px} .grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px} }
   </style>
 </head>
 <body>
+
 <nav>
   <div class="logo">Stream<span>Kolla</span></div>
   <div style="font-size:.8rem;color:var(--muted)">&#127480;&#127466; Sverige</div>
 </nav>
+
 <div class="hero">
-  <h1>Var kan du streama det?</h1>
-  <p>Sök på en serie och se vilka svenska streamingplattformar som erbjuder den.</p>
+  <h1>Var kan du <em>streama</em> det?</h1>
+  <p>Sök på en serie – se direkt vilka plattformar som erbjuder den i Sverige.</p>
   <div class="search-wrap">
-    <input id="search-input" type="text" placeholder="T.ex. Breaking Bad, Game of Thrones, Succession…" autocomplete="off" />
+    <input id="search-input" type="text" placeholder="T.ex. Breaking Bad, Succession, Ted Lasso…" autocomplete="off" />
     <button onclick="runSearch()">Sök</button>
   </div>
 </div>
+
 <div class="filter-bar">
   <button class="filter-btn active" onclick="filterByPlatform(this,'all')">Alla</button>
   <button class="filter-btn" onclick="filterByPlatform(this,'Netflix')"><span style="color:#e50914">●</span> Netflix</button>
-  <button class="filter-btn" onclick="filterByPlatform(this,'Max')"><span style="color:#002be7">●</span> Max</button>
-  <button class="filter-btn" onclick="filterByPlatform(this,'Disney+')"><span style="color:#0f3fa6">●</span> Disney+</button>
-  <button class="filter-btn" onclick="filterByPlatform(this,'Prime Video')"><span style="color:#00a8e0">●</span> Prime Video</button>
-  <button class="filter-btn" onclick="filterByPlatform(this,'Apple TV+')"><span style="color:#aaa">●</span> Apple TV+</button>
-  <button class="filter-btn" onclick="filterByPlatform(this,'Viaplay')"><span style="color:#7b2d8b">●</span> Viaplay</button>
-  <button class="filter-btn" onclick="filterByPlatform(this,'C More')"><span style="color:#d4001e">●</span> C More</button>
-  <button class="filter-btn" onclick="filterByPlatform(this,'SkyShowtime')"><span style="color:#0070d2">●</span> SkyShowtime</button>
-  <button class="filter-btn" onclick="filterByPlatform(this,'SVT Play')"><span style="color:#316097">●</span> SVT Play</button>
-  <button class="filter-btn" onclick="filterByPlatform(this,'TV4 Play')"><span style="color:#e8000d">●</span> TV4 Play</button>
+  <button class="filter-btn" onclick="filterByPlatform(this,'Max')"><span style="color:#4f8ef7">●</span> Max</button>
+  <button class="filter-btn" onclick="filterByPlatform(this,'Disney+')"><span style="color:#5585e8">●</span> Disney+</button>
+  <button class="filter-btn" onclick="filterByPlatform(this,'Prime Video')"><span style="color:#00c8ff">●</span> Prime Video</button>
+  <button class="filter-btn" onclick="filterByPlatform(this,'Apple TV+')"><span style="color:#bbb">●</span> Apple TV+</button>
+  <button class="filter-btn" onclick="filterByPlatform(this,'Viaplay')"><span style="color:#b05ecf">●</span> Viaplay</button>
+  <button class="filter-btn" onclick="filterByPlatform(this,'C More')"><span style="color:#ff4d4d">●</span> C More</button>
+  <button class="filter-btn" onclick="filterByPlatform(this,'SkyShowtime')"><span style="color:#38acff">●</span> SkyShowtime</button>
+  <button class="filter-btn" onclick="filterByPlatform(this,'Paramount+')"><span style="color:#5b8fe8">●</span> Paramount+</button>
+  <button class="filter-btn" onclick="filterByPlatform(this,'SVT Play')"><span style="color:#4aa3d8">●</span> SVT Play</button>
+  <button class="filter-btn" onclick="filterByPlatform(this,'TV4 Play')"><span style="color:#ff3333">●</span> TV4 Play</button>
 </div>
+
 <main>
   <div id="search-section" style="display:none;margin-bottom:48px">
     <div class="section-title" id="search-label">Sökresultat</div>
@@ -107,111 +172,177 @@
   <div class="section-title" id="browse-label">Populära serier</div>
   <div class="grid" id="main-grid"></div>
 </main>
+
 <div class="overlay" id="overlay" onclick="closeIfOutside(event)">
   <div class="modal" id="modal">
     <button class="close-btn" onclick="closeModal()">&#10005;</button>
     <div id="modal-inner"></div>
   </div>
 </div>
+
 <script>
+const IMG   = 'https://image.tmdb.org/t/p/w342';
+const IMG_W = 'https://image.tmdb.org/t/p/w780';
+
 const PLATFORMS = {
-  Netflix:     {cls:'pl-netflix',  color:'#e50914', type:'Prenumeration'},
-  Max:         {cls:'pl-max',      color:'#002be7', type:'Prenumeration'},
-  'Disney+':   {cls:'pl-disney',   color:'#0f3fa6', type:'Prenumeration'},
-  'Prime Video':{cls:'pl-prime',   color:'#00a8e0', type:'Prenumeration'},
-  'Apple TV+': {cls:'pl-apple',    color:'#555',    type:'Prenumeration'},
-  Viaplay:     {cls:'pl-viaplay',  color:'#7b2d8b', type:'Prenumeration'},
-  'C More':    {cls:'pl-cmore',    color:'#d4001e', type:'Prenumeration'},
-  SkyShowtime: {cls:'pl-sky',      color:'#0070d2', type:'Prenumeration'},
-  'SVT Play':  {cls:'pl-svtplay',  color:'#316097', type:'Gratis'},
-  'TV4 Play':  {cls:'pl-tv4play',  color:'#e8000d', type:'Gratis / Premium'},
+  Netflix:      {cls:'pl-netflix',   color:'#e50914', type:'Prenumeration'},
+  Max:          {cls:'pl-max',       color:'#4f8ef7', type:'Prenumeration'},
+  'Disney+':    {cls:'pl-disney',    color:'#5585e8', type:'Prenumeration'},
+  'Prime Video':{cls:'pl-prime',     color:'#00a8e0', type:'Prenumeration'},
+  'Apple TV+':  {cls:'pl-apple',     color:'#666',    type:'Prenumeration'},
+  Viaplay:      {cls:'pl-viaplay',   color:'#9b4dbd', type:'Prenumeration'},
+  'C More':     {cls:'pl-cmore',     color:'#d4001e', type:'Prenumeration'},
+  SkyShowtime:  {cls:'pl-sky',       color:'#0070d2', type:'Prenumeration'},
+  'Paramount+': {cls:'pl-paramount', color:'#1155b8', type:'Prenumeration'},
+  'SVT Play':   {cls:'pl-svtplay',   color:'#2d7ab5', type:'Gratis'},
+  'TV4 Play':   {cls:'pl-tv4play',   color:'#e8000d', type:'Gratis / Premium'},
 };
 
+/* ── SERIER ──────────────────────────────────────────────────────────── */
 const SHOWS = [
-  {id:1,  title:'Breaking Bad',         year:2008, genre:'Drama / Thriller',  icon:'&#x1F9EA;', grad:'linear-gradient(135deg,#1a2a0a,#2d4a10)', desc:'En gymnasielärare i kemi insjuknar i cancer och börjar tillverka metamfetamin för att säkra familjens ekonomi.',               platforms:['Netflix']},
-  {id:2,  title:'Better Call Saul',     year:2015, genre:'Drama / Thriller',  icon:'&#x2696;&#xFE0F;', grad:'linear-gradient(135deg,#1a1a0a,#2a2a10)', desc:'Förhistorien om hur den slipprige advokaten Jimmy McGill förvandlas till Saul Goodman.',                                 platforms:['Netflix']},
-  {id:3,  title:'Narcos',               year:2015, genre:'Drama / Brott',     icon:'&#x1F333;', grad:'linear-gradient(135deg,#1a0a0a,#2a1a05)', desc:'Sann historia om kokainhandeln och uppgången och fallet för drogbaronen Pablo Escobar.',                                      platforms:['Netflix']},
-  {id:4,  title:'Squid Game',           year:2021, genre:'Thriller / Drama',  icon:'&#x1F7E2;', grad:'linear-gradient(135deg,#0a1f0a,#102a15)', desc:'Skuldsatta människor deltar i barnlekar med dödliga konsekvenser för chansen att vinna 45,6 miljarder won.',                   platforms:['Netflix']},
-  {id:5,  title:'Stranger Things',      year:2016, genre:'Sci-fi / Skräck',   icon:'&#x1F526;', grad:'linear-gradient(135deg,#0a0a1f,#10102a)', desc:'En grupp barn i 1980-talets Indiana stöter på övernaturliga krafter och en mystisk statlig organisation.',                    platforms:['Netflix']},
-  {id:6,  title:'The Crown',            year:2016, genre:'Drama / Historia',  icon:'&#x1F451;', grad:'linear-gradient(135deg,#1a1505,#2a2008)', desc:'Den dramatiska historien om det brittiska kungahuset från 1940-talet och framåt.',                                           platforms:['Netflix']},
-  {id:7,  title:'Wednesday',            year:2022, genre:'Komedi / Skräck',   icon:'&#x1F5A4;', grad:'linear-gradient(135deg,#0a0a0a,#1a0a1a)', desc:'Wednesday Addams löser ett monstruöst mysterium medan hon studerar på Nevermore Academy.',                                     platforms:['Netflix']},
-  {id:8,  title:'Money Heist',          year:2017, genre:'Thriller / Brott',  icon:'&#x1F534;', grad:'linear-gradient(135deg,#1f0a0a,#2a1010)', desc:'En genial rånare planerar det mest ambitiösa rånet i historien mot Spaniens nationella myntverk.',                           platforms:['Netflix']},
-  {id:9,  title:'Dark',                 year:2017, genre:'Sci-fi / Thriller', icon:'&#x1F300;', grad:'linear-gradient(135deg,#050510,#0a0a1a)', desc:'Tysk sci-fi-thriller om fyra familjer i en liten stad som fastnar i en tidsslinga som spänner tre generationer.',             platforms:['Netflix']},
-  {id:10, title:'Mindhunter',           year:2017, genre:'Drama / Brott',     icon:'&#x1F9E0;', grad:'linear-gradient(135deg,#0f0f0f,#1a1010)', desc:'FBI-agenter intervjuar seriemördare på 1970-talet för att förstå deras psykologi och lösa ouppklarade fall.',                  platforms:['Netflix']},
-  {id:11, title:'Bridgerton',           year:2020, genre:'Romantik / Drama',  icon:'&#x1F339;', grad:'linear-gradient(135deg,#1f0a1a,#2a1020)', desc:'Kärleksintrigerna bland den brittiska högadeln i det regentskapet London under tidigt 1800-tal.',                            platforms:['Netflix']},
-  {id:12, title:'The Witcher',          year:2019, genre:'Fantasy / Action',  icon:'&#x2694;&#xFE0F;', grad:'linear-gradient(135deg,#0a1a0a,#152015)', desc:'Geralt av Rivia, en ensam monsterjägare, kämpar för att hitta sin plats i en komplex och farlig värld.',               platforms:['Netflix']},
-  {id:13, title:'Ozark',                year:2017, genre:'Drama / Thriller',  icon:'&#x1F4B0;', grad:'linear-gradient(135deg,#030d10,#071520)', desc:'En finansrådgivare tvingas flytta sin familj till Ozarks för att tvätta pengar åt ett mexikanskt drogkartell.',               platforms:['Netflix']},
-  {id:14, title:'You',                  year:2018, genre:'Thriller / Drama',  icon:'&#x1F441;&#xFE0F;', grad:'linear-gradient(135deg,#0f0a1a,#18101f)', desc:'En bokhandlare med ett osunt besatthetsbeteende förföljer och manipulerar de kvinnor han förälskar sig i.',         platforms:['Netflix']},
-  {id:15, title:'Sex Education',        year:2019, genre:'Komedi / Drama',    icon:'&#x1F393;', grad:'linear-gradient(135deg,#1a0a10,#25101a)', desc:'En tonåring vars mamma är sexterapeut startar en underjordisk sexklinik på sin skola.',                                       platforms:['Netflix']},
-  {id:16, title:'Black Mirror',         year:2011, genre:'Sci-fi / Thriller', icon:'&#x1F4F1;', grad:'linear-gradient(135deg,#050505,#111)', desc:'Antologiserie som utforskar den mörka sidan av modern teknik och samhälle.',                                                     platforms:['Netflix']},
-  {id:17, title:'Outer Banks',          year:2020, genre:'Action / Äventyr',  icon:'&#x1F30A;', grad:'linear-gradient(135deg,#0a1520,#10202a)', desc:'En grupp tonåringar på en ö försöker lösa ett mysterium kopplat till en försvunnen skatt.',                                   platforms:['Netflix']},
-  {id:18, title:'Cobra Kai',            year:2018, genre:'Action / Drama',    icon:'&#x1F94B;', grad:'linear-gradient(135deg,#1a1a0a,#25200f)', desc:'Karate Kid-universumet återuppstår när Johnny Lawrence öppnar Cobra Kai-dojo och rivaliteten med Daniel blåser upp.',         platforms:['Netflix']},
-  {id:19, title:'Lupin',                year:2021, genre:'Thriller / Action', icon:'&#x1F3A9;', grad:'linear-gradient(135deg,#0a0f1a,#101520)', desc:'Inspirerad av Arsène Lupin – en mans mission att hämnas sin far mot en rik och mäktig familj i Paris.',                       platforms:['Netflix']},
-  {id:20, title:'Peaky Blinders',       year:2013, genre:'Drama / Brott',     icon:'&#x1F3A9;', grad:'linear-gradient(135deg,#0a0505,#180d0d)', desc:'En kriminell familj i Birmingham efter första världskriget strävar efter makt och respektabilitet.',                          platforms:['Netflix']},
-  {id:21, title:'The Diplomat',         year:2023, genre:'Drama / Thriller',  icon:'&#x1F310;', grad:'linear-gradient(135deg,#08080f,#10101a)', desc:'En oväntat utnämnd USA-ambassadör i London navigerar en internationell kris med sin karismatiska makes hjälp.',              platforms:['Netflix']},
-  {id:22, title:'House of Cards',       year:2013, genre:'Drama / Politik',   icon:'&#x1F0CF;', grad:'linear-gradient(135deg,#080808,#10100f)', desc:'En hänsynslös kongresspolitiker manipulerar, ljuger och intrigerar sig fram mot presidentämbetet.',                           platforms:['Netflix']},
-  {id:23, title:'Sherlock',             year:2010, genre:'Drama / Thriller',  icon:'&#x1F52C;', grad:'linear-gradient(135deg,#080808,#0f1010)', desc:'Nutida brittisk tolkning av Sherlock Holmes där den excentriske detektiven och Watson löser moderna mysterier.',              platforms:['Netflix']},
-  {id:24, title:'Squid Game S2',        year:2024, genre:'Thriller / Drama',  icon:'&#x1F53A;', grad:'linear-gradient(135deg,#0a1f0a,#102a15)', desc:'Gi-hun återvänder till Squid Game med en mission att stoppa organisationen inifrån.',                                        platforms:['Netflix']},
-  {id:30, title:'Game of Thrones',      year:2011, genre:'Fantasy / Drama',   icon:'&#x1F409;', grad:'linear-gradient(135deg,#0f0a0a,#1a1208)', desc:'Sju ädla familjer slåss om kontrollen över Westeros järntroner medan ett urgammalt hot vaknar i norr.',                      platforms:['Max']},
-  {id:31, title:'House of the Dragon',  year:2022, genre:'Fantasy / Drama',   icon:'&#x1F432;', grad:'linear-gradient(135deg,#1a0505,#250808)', desc:'Förhistorien om huset Targaryen och det inbördeskrig som splittrade det 200 år före Game of Thrones.',                       platforms:['Max']},
-  {id:32, title:'The Wire',             year:2002, genre:'Drama / Brott',     icon:'&#x1F4E1;', grad:'linear-gradient(135deg,#080d10,#101820)', desc:'En detaljerad och realistisk skildring av Baltimores narkotikahandel sedd från både polisens och kriminellas sida.',         platforms:['Max']},
-  {id:33, title:'The Sopranos',         year:1999, genre:'Drama / Brott',     icon:'&#x1F35D;', grad:'linear-gradient(135deg,#0f0a08,#1a1410)', desc:'New Jersey-maffiachefen Tony Soprano försöker balansera familjelivet med att leda sin kriminella organisation.',             platforms:['Max']},
-  {id:34, title:'The Last of Us',       year:2023, genre:'Drama / Sci-fi',    icon:'&#x1F344;', grad:'linear-gradient(135deg,#0a1005,#121a08)', desc:'En man smugglar en immun tonåring genom ett postapokalyptiskt Amerika infekterat av en soppsvampsparasit.',                  platforms:['Max']},
-  {id:35, title:'Succession',           year:2018, genre:'Drama / Komedi',    icon:'&#x1F3E2;', grad:'linear-gradient(135deg,#0a0a0a,#151510)', desc:'En dysfunktionell mediemogulsfamilj slåss om kontrollen över ett multinationellt mediekonglomerat.',                         platforms:['Max']},
-  {id:36, title:'Euphoria',             year:2019, genre:'Drama',             icon:'&#x1F48A;', grad:'linear-gradient(135deg,#0f0520,#180a2a)', desc:'Grupp av tonåringstudenter navigerar kärlek, identitet, trauma, droger och sociala medier.',                                 platforms:['Max']},
-  {id:37, title:'The White Lotus',      year:2021, genre:'Satir / Thriller',  icon:'&#x1F33A;', grad:'linear-gradient(135deg,#1a1205,#251a08)', desc:'Antologiserie som följer gäster och personal på ett lyxhotell med oväntade konsekvenser.',                                  platforms:['Max']},
-  {id:38, title:'Barry',                year:2018, genre:'Komedi / Drama',    icon:'&#x1F52B;', grad:'linear-gradient(135deg,#0a0a0f,#121218)', desc:'En desillusionerad legosoldats hits man hittar passion för skådespeleri i Los Angeles.',                                     platforms:['Max']},
-  {id:39, title:'Chernobyl',            year:2019, genre:'Drama / Historia',  icon:'&#x2622;&#xFE0F;', grad:'linear-gradient(135deg,#0f1205,#18200a)', desc:'Den dramatiska händelsekedjan bakom Tjernobylkatastrofen 1986 och konsekvenserna för dem inblandade.',             platforms:['Max']},
-  {id:40, title:'True Detective',       year:2014, genre:'Drama / Thriller',  icon:'&#x1F50D;', grad:'linear-gradient(135deg,#080808,#100f0a)', desc:'Antologiserie om detektiver som löser hemska brott med djupa moraliska och existentiella övertoner.',                       platforms:['Max']},
-  {id:41, title:'Band of Brothers',     year:2001, genre:'Drama / Krig',      icon:'&#x1F396;&#xFE0F;', grad:'linear-gradient(135deg,#0a0a05,#150f08)', desc:'Följer Easy Company, 506th Regiment, från D-Day till Tysklands kapitulation – baserat på sanna händelser.',      platforms:['Max']},
-  {id:42, title:'Boardwalk Empire',     year:2010, genre:'Drama / Brott',     icon:'&#x1F943;', grad:'linear-gradient(135deg,#080a0f,#101420)', desc:'Nucky Thompson styr utskänkningsförbudstidens Atlantic City med järnhand på 1920-talet.',                                  platforms:['Max']},
-  {id:50, title:'The Mandalorian',      year:2019, genre:'Sci-fi / Action',   icon:'&#x1F680;', grad:'linear-gradient(135deg,#0a0f1a,#101520)', desc:'En ensam galaktisk dussinbeting tar sig an ett mystiskt uppdrag och hittar ett barn med extraordinära krafter.',            platforms:['Disney+']},
-  {id:51, title:'Andor',                year:2022, genre:'Sci-fi / Thriller', icon:'&#x2B50;', grad:'linear-gradient(135deg,#060810,#0c1018)', desc:'Förhistorien om rebellen Cassian Andor och hur Rebellionen mot imperiet tog form.',                                          platforms:['Disney+']},
-  {id:52, title:'The Bear',             year:2022, genre:'Drama / Komedi',    icon:'&#x1F37D;&#xFE0F;', grad:'linear-gradient(135deg,#0f0a07,#1a1208)', desc:'En prisvinnande kock tvingas ta över sin familjs smörgåsbutik i Chicago och navigerar kaos och trauma.',      platforms:['Disney+']},
-  {id:53, title:'Shogun',               year:2024, genre:'Drama / Historia',  icon:'&#x26E9;&#xFE0F;', grad:'linear-gradient(135deg,#0a0808,#150f0a)', desc:'En engelsk sjöman hamnar i feodalt Japan och fastnar i politiska intrigen mellan rivaliserande krigsherrar.',   platforms:['Disney+']},
-  {id:54, title:'Only Murders in the Building', year:2021, genre:'Komedi / Thriller', icon:'&#x1F399;&#xFE0F;', grad:'linear-gradient(135deg,#0f0a1a,#181020)', desc:'Tre grannar i ett lyxhus i New York startar en true crime-podcast när ett mord sker i deras byggnad.', platforms:['Disney+']},
-  {id:55, title:'Atlanta',              year:2016, genre:'Komedi / Drama',    icon:'&#x1F5A4;', grad:'linear-gradient(135deg,#0a100a,#101810)', desc:'Earning Marks försöker styra sin kusins karriär som rapper i Atlanta och navigerar absurda situationer.',               platforms:['Disney+']},
-  {id:56, title:'What We Do in the Shadows', year:2019, genre:'Komedi / Skräck', icon:'&#x1F9DB;', grad:'linear-gradient(135deg,#0f0510,#1a0818)', desc:'Mockumentär om fyra vampyrer som delar ett hus i New York och kämpar med det moderna livet.',            platforms:['Disney+']},
-  {id:57, title:'Lost',                 year:2004, genre:'Sci-fi / Drama',    icon:'&#x1F334;', grad:'linear-gradient(135deg,#081008,#101812)', desc:'Överlevande från ett flygplansvrak fastnar på en mystisk ö med hemligheter bortom deras förståelse.',                      platforms:['Disney+']},
-  {id:60, title:'The Boys',             year:2019, genre:'Action / Sci-fi',   icon:'&#x1F9B8;', grad:'linear-gradient(135deg,#1a0a0a,#220d0d)', desc:'I en värld där superkrafter är normalt tar en grupp vigilanter upp kampen mot korrumperade superhjältar.',              platforms:['Prime Video']},
-  {id:61, title:'Reacher',              year:2022, genre:'Action / Thriller', icon:'&#x1F4AA;', grad:'linear-gradient(135deg,#0f0a07,#1a120a)', desc:'En ensam ex-militärspecialist hamnar i en liten stad och stöter på ett nät av korruption och brott.',                   platforms:['Prime Video']},
-  {id:62, title:'Jack Ryan',            year:2018, genre:'Action / Thriller', icon:'&#x1F30D;', grad:'linear-gradient(135deg,#050f1a,#0a1820)', desc:'CIA-analytikern Jack Ryan dras in i en farlig fältkampanj när han spårar ett framväxande terroristhot.',               platforms:['Prime Video']},
-  {id:63, title:'The Rings of Power',   year:2022, genre:'Fantasy / Äventyr', icon:'&#x1F48D;', grad:'linear-gradient(135deg,#0f0f05,#1a1808)', desc:'Episk fantasy i Tolkiens Mittjorden under den Andra Åldern – tusentals år innan Härskarringen.',                        platforms:['Prime Video']},
-  {id:64, title:'Invincible',           year:2021, genre:'Action / Sci-fi',   icon:'&#x1F985;', grad:'linear-gradient(135deg,#0a0a1f,#101025)', desc:'Mark Grayson ärver sin fars superkrafter och lär sig att bära på manteln som hjälte med svåra konsekvenser.',          platforms:['Prime Video']},
-  {id:65, title:'Fleabag',              year:2016, genre:'Komedi / Drama',    icon:'&#x1F338;', grad:'linear-gradient(135deg,#100a0f,#1a1018)', desc:'En brittisk kvinna berättar om sin dysfunktionella tillvaro i London med briljant mörk humor.',                          platforms:['Prime Video']},
-  {id:66, title:'The Marvelous Mrs. Maisel', year:2017, genre:'Komedi / Drama', icon:'&#x1F5A4;', grad:'linear-gradient(135deg,#1a050a,#220810)', desc:'En överklasskvinnas i 1950-talets New York börjar en karriär som ståuppkomiker efter att hennes man lämnar henne.',  platforms:['Prime Video']},
-  {id:67, title:'Mr. Robot',            year:2015, genre:'Thriller / Drama',  icon:'&#x1F4BB;', grad:'linear-gradient(135deg,#050505,#0d0d12)', desc:'En socialt isolerad hacker rekryteras av en mystisk anarkist för att ta ner ett globalt företagsimperium.',            platforms:['Prime Video']},
-  {id:68, title:'Fallout',              year:2024, genre:'Sci-fi / Action',   icon:'&#x2622;&#xFE0F;', grad:'linear-gradient(135deg,#0a1005,#10180a)', desc:'Baserat på spelet – en kvinna kliver ut ur sin underjordiska bunker och möter ett ödelagt postapokalyptiskt USA.', platforms:['Prime Video']},
-  {id:70, title:'Severance',            year:2022, genre:'Sci-fi / Thriller', icon:'&#x1F9E9;', grad:'linear-gradient(135deg,#050510,#0a0a1a)', desc:'Anställda på Lumon Industries genomgår en procedur som separerar deras arbetsminnen från deras privatliv helt.',         platforms:['Apple TV+']},
-  {id:71, title:'Ted Lasso',            year:2020, genre:'Komedi / Sport',    icon:'&#x26BD;', grad:'linear-gradient(135deg,#0a1205,#12200a)', desc:'En optimistisk amerikansk fotbollstränare anställs för att leda ett engelskt fotbollslag han ingenting vet om.',         platforms:['Apple TV+']},
-  {id:72, title:'The Morning Show',     year:2019, genre:'Drama',             icon:'&#x1F4FA;', grad:'linear-gradient(135deg,#0a0510,#120a18)', desc:'Bakom kulisserna i ett morgon-TV-program avslöjas makt, skandal och de som arbetar i dess skugga.',                    platforms:['Apple TV+']},
-  {id:73, title:'Slow Horses',          year:2022, genre:'Thriller / Spionage', icon:'&#x1F40E;', grad:'linear-gradient(135deg,#080808,#100f0d)', desc:'Misslyckade MI5-agenter hanterar smutsiga operationer som deras byrå vill hålla hemliga.',                         platforms:['Apple TV+']},
-  {id:74, title:'Shrinking',            year:2023, genre:'Komedi / Drama',    icon:'&#x1F6CB;&#xFE0F;', grad:'linear-gradient(135deg,#0a0f10,#121820)', desc:'En sörjande terapeut bryter mot reglerna och börjar säga exakt vad han tänker till sina patienter.',       platforms:['Apple TV+']},
-  {id:75, title:'For All Mankind',      year:2019, genre:'Sci-fi / Drama',    icon:'&#x1F319;', grad:'linear-gradient(135deg,#050510,#080818)', desc:'Alternativ historia där Sovjet landade på månen först och rymdkapplöpningen aldrig tog slut.',                          platforms:['Apple TV+']},
-  {id:76, title:'Bad Sisters',          year:2022, genre:'Komedi / Thriller', icon:'&#x1F46D;', grad:'linear-gradient(135deg,#0a0f05,#121808)', desc:'Fyra systrar planerar att döda sin systers fruktansvärda make i denna mörka irländska komediserie.',                    platforms:['Apple TV+']},
-  {id:77, title:'Hijack',               year:2023, genre:'Thriller / Action', icon:'&#x2708;&#xFE0F;', grad:'linear-gradient(135deg,#05080f,#0a1018)', desc:'En affärsförhandlare kämpar i realtid för att rädda 200 passagerare under ett terroriststyrt flygplanskapning.', platforms:['Apple TV+']},
-  {id:80, title:'Vikings',              year:2013, genre:'Drama / Historia',  icon:'&#x2694;&#xFE0F;', grad:'linear-gradient(135deg,#0a0808,#150f0d)', desc:'Sagaen om Ragnar Lothbrok och hans söner som erövrar och utforskar nya land under vikingarnas tidsålder.',     platforms:['Viaplay']},
-  {id:81, title:'Broen',                year:2011, genre:'Thriller / Brott',  icon:'&#x1F309;', grad:'linear-gradient(135deg,#050810,#0a1018)', desc:'En dansk och en svensk kriminalinspektör samarbetar när ett mord begås mitt på Öresundsbron.',                          platforms:['Viaplay']},
-  {id:82, title:'Beforeigners',         year:2019, genre:'Sci-fi / Brott',    icon:'&#x1FA93;', grad:'linear-gradient(135deg,#080a10,#0f1018)', desc:'Norsk sci-fi om en tid när folk från det förflutna – vikingar, stenåldersmänniskor – dyker upp i nutida Norge.',        platforms:['Viaplay']},
-  {id:85, title:'Yellowjackets',        year:2021, genre:'Thriller / Drama',  icon:'&#x1F41D;', grad:'linear-gradient(135deg,#0f0d05,#1a1808)', desc:'Gymnasieflickor fastnar i vildmarken efter ett flygplansvrak, med mörka hemligheter 25 år senare.',                   platforms:['C More']},
-  {id:86, title:'Billions',             year:2016, genre:'Drama / Thriller',  icon:'&#x1F4C8;', grad:'linear-gradient(135deg,#0a0a05,#141412)', desc:'En hänsynslös hedgefondchef i New York hamnar i klinch med en ambitiös federal åklagare.',                             platforms:['C More']},
-  {id:87, title:'Homeland',             year:2011, genre:'Thriller / Spionage', icon:'&#x1F575;&#xFE0F;', grad:'linear-gradient(135deg,#0a0508,#14080f)', desc:'En CIA-agent misstänker att en krigshjälte som vände hem är hjärntvättad terrorist.',               platforms:['C More']},
-  {id:88, title:'Dexter',               year:2006, genre:'Drama / Thriller',  icon:'&#x1FA78;', grad:'linear-gradient(135deg,#1a0505,#220808)', desc:'En rättsmedicinsk analytiker hos Miami PD lever ett dubbelliv som vigilantistmördare med egna regler.',               platforms:['C More']},
-  {id:89, title:'Ray Donovan',          year:2013, genre:'Drama / Thriller',  icon:'&#x1F94A;', grad:'linear-gradient(135deg,#0d0a08,#18130f)', desc:'En professionell fixare i Hollywood löser rika klienters problem medan han kämpar med sin egen dysfunktionella familj.', platforms:['C More']},
-  {id:90, title:'Yellowstone',          year:2018, genre:'Drama / Western',   icon:'&#x1F920;', grad:'linear-gradient(135deg,#0a0807,#15110a)', desc:'Ranchägaren John Dutton skyddar sin familjs mark mot fastighetsbolag och nationalparken i Montana.',                    platforms:['SkyShowtime']},
-  {id:91, title:'1923',                 year:2022, genre:'Drama / Western',   icon:'&#x26F0;&#xFE0F;', grad:'linear-gradient(135deg,#0a0c10,#10141a)', desc:'Förhistorien om Dutton-familjen under den amerikanska frontepoken på 1920-talet.',                         platforms:['SkyShowtime']},
-  {id:92, title:'Tulsa King',           year:2022, genre:'Drama / Komedi',    icon:'&#x1F91C;', grad:'linear-gradient(135deg,#0f0808,#1a1010)', desc:'En New York-maffiaboss skickas till Tulsa och tvingas bygga upp ett nytt imperium i okänt territorium.',               platforms:['SkyShowtime']},
-  {id:93, title:'Halo',                 year:2022, genre:'Sci-fi / Action',   icon:'&#x1FA96;', grad:'linear-gradient(135deg,#070f18,#0e1820)', desc:'Baserat på spelen – Master Chief leder mänsklighetens kamp mot den utomjordiska Covenant-alliansen.',                  platforms:['SkyShowtime']},
-  {id:94, title:'Mayor of Kingstown',   year:2021, genre:'Drama / Thriller',  icon:'&#x1F3DB;&#xFE0F;', grad:'linear-gradient(135deg,#080808,#101010)', desc:'Familyen McLusky fungerar som mellanhänder för makt i en stad vars ekonomi kretsar kring fängelsekomplexet.',  platforms:['SkyShowtime']},
-  {id:95, title:'Star Trek: Strange New Worlds', year:2022, genre:'Sci-fi',   icon:'&#x1F596;', grad:'linear-gradient(135deg,#050a10,#0a1018)', desc:'Kapten Pike och USS Enterprise utforskar nya världar i Star Treks klassiska anda av äventyr och humanism.',         platforms:['SkyShowtime']},
-  {id:100,title:'Solsidan',             year:2010, genre:'Komedi',            icon:'&#x1F3E1;', grad:'linear-gradient(135deg,#0a1010,#101a1a)', desc:'Komedi om livet i storstadsförorten Saltsjöbaden och allt från villarenoveringar till relationskaos.',               platforms:['SVT Play']},
-  {id:101,title:'Bonusfamiljen',        year:2017, genre:'Drama / Komedi',    icon:'&#x1F46A;', grad:'linear-gradient(135deg,#0a0f0a,#121812)', desc:'Svensk dramakomediserie om de utmaningar och glädjeämnen som uppstår i en bonusfamilj.',                              platforms:['SVT Play']},
-  {id:102,title:'Tunna blå linjen',     year:2018, genre:'Drama / Brott',     icon:'&#x1F46E;', grad:'linear-gradient(135deg,#050810,#0a1018)', desc:'En erfaren polischef i Stockholm brottas med utbrändhet, lojalitet och korruption inom kåren.',                      platforms:['SVT Play']},
-  {id:110,title:'Suits',                year:2011, genre:'Drama / Juridik',   icon:'&#x1F454;', grad:'linear-gradient(135deg,#0a0808,#150f0d)', desc:'En ung man med fotografiskt minne börjar jobba som advokatassistent utan att ha läst juridik.',                      platforms:['Netflix','Prime Video']},
-  {id:111,title:'Friends',              year:1994, genre:'Komedi',            icon:'&#x2615;', grad:'linear-gradient(135deg,#10080a,#1a1010)', desc:'Sex vänner navigerar livet, kärleken och karriären i New York under 10 år av glädje och missöden.',                    platforms:['Max']},
-  {id:112,title:'The Office',           year:2005, genre:'Komedi',            icon:'&#x1F4CB;', grad:'linear-gradient(135deg,#0a0f10,#121820)', desc:'Mockumentär om livet på ett pappersföretag i Scranton, Pennsylvania under den excentriske chefen Michael Scott.',    platforms:['Prime Video']},
-  {id:113,title:'Daredevil: Born Again',year:2025, genre:'Action / Superhero',icon:'&#x1F608;', grad:'linear-gradient(135deg,#1a0505,#250808)', desc:'Matt Murdock återvänder som Daredevil och konfronteras av Kingpin som verkar i politikens värld.',                    platforms:['Disney+']},
-  {id:114,title:'Presumed Innocent',    year:2024, genre:'Thriller / Drama',  icon:'&#x1F512;', grad:'linear-gradient(135deg,#070810,#0e1018)', desc:'En åklagare misstänks för mordet på sin kollega och älskling och måste bevisa sin oskuld.',                          platforms:['Apple TV+']},
+  /* ── NETFLIX ── */
+  {id:1,  title:'Breaking Bad',       year:2008, genre:'Drama / Thriller',  poster:'/ggFHVNu6YYI5L9pCfOacjizRGt.jpg',   grad:'linear-gradient(135deg,#1a2a0a,#2d4a10)', platforms:['Netflix'],       desc:'En gymnasielärare i kemi insjuknar i cancer och börjar tillverka metamfetamin för att säkra familjens ekonomi.'},
+  {id:2,  title:'Better Call Saul',   year:2015, genre:'Drama / Thriller',  poster:'/fC2HDm5t0kCg6kFqo7E45CakOtV.jpg',   grad:'linear-gradient(135deg,#1a1a0a,#2a2a10)', platforms:['Netflix'],       desc:'Förhistorien om hur den slipprige advokaten Jimmy McGill förvandlas till Saul Goodman.'},
+  {id:3,  title:'Narcos',             year:2015, genre:'Drama / Brott',     poster:'/rTmal9fDbwh5F0waol2hq35U4ah.jpg',   grad:'linear-gradient(135deg,#1a0a0a,#2a1a05)', platforms:['Netflix'],       desc:'Sann historia om kokainhandeln och uppgången och fallet för drogbaronen Pablo Escobar.'},
+  {id:4,  title:'Squid Game',         year:2021, genre:'Thriller / Drama',  poster:'/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg',   grad:'linear-gradient(135deg,#0a1f0a,#102a15)', platforms:['Netflix'],       desc:'Skuldsatta människor deltar i barnlekar med dödliga konsekvenser för chansen att vinna 45,6 miljarder won.'},
+  {id:5,  title:'Stranger Things',    year:2016, genre:'Sci-fi / Skräck',   poster:'/49WJfeN0moxb9IPfGn8AIqMGskD.jpg',   grad:'linear-gradient(135deg,#0a0a1f,#10102a)', platforms:['Netflix'],       desc:'En grupp barn i 1980-talets Indiana stöter på övernaturliga krafter och en mystisk statlig organisation.'},
+  {id:6,  title:'The Crown',          year:2016, genre:'Drama / Historia',  poster:'/1M876KPjulVwppTc3IwnFBMIGFi.jpg',   grad:'linear-gradient(135deg,#1a1505,#2a2008)', platforms:['Netflix'],       desc:'Den dramatiska historien om det brittiska kungahuset från 1940-talet och framåt.'},
+  {id:7,  title:'Wednesday',          year:2022, genre:'Komedi / Skräck',   poster:'/jeGtaMwGxPmQN5xM4ClnwPQcDmb.jpg',   grad:'linear-gradient(135deg,#0a0a0a,#1a0a1a)', platforms:['Netflix'],       desc:'Wednesday Addams löser ett monstruöst mysterium medan hon studerar på Nevermore Academy.'},
+  {id:8,  title:'Money Heist',        year:2017, genre:'Thriller / Brott',  poster:'/MoEKaPFHABtA1xKoOteirGaHl1.jpg',    grad:'linear-gradient(135deg,#1f0a0a,#2a1010)', platforms:['Netflix'],       desc:'En genial rånare planerar det mest ambitiösa rånet i historien mot Spaniens nationella myntverk.'},
+  {id:9,  title:'Dark',               year:2017, genre:'Sci-fi / Thriller', poster:'/apbrbWs5wheK7VlqFy1sScX7sE8.jpg',   grad:'linear-gradient(135deg,#050510,#0a0a1a)', platforms:['Netflix'],       desc:'Tysk sci-fi-thriller om fyra familjer i en liten stad som fastnar i en tidsslinga som spänner tre generationer.'},
+  {id:10, title:'Mindhunter',         year:2017, genre:'Drama / Brott',     poster:'/eg5tPCtkHDdSQY6eBZEfGCGj4m0.jpg',   grad:'linear-gradient(135deg,#0f0f0f,#1a1010)', platforms:['Netflix'],       desc:'FBI-agenter intervjuar seriemördare på 1970-talet för att förstå deras psykologi.'},
+  {id:11, title:'Bridgerton',         year:2020, genre:'Romantik / Drama',  poster:'/lEohhsnpG5C0bEtqe74pMn7XYQD.jpg',   grad:'linear-gradient(135deg,#1f0a1a,#2a1020)', platforms:['Netflix'],       desc:'Kärleksintrigerna bland den brittiska högadeln i det regentskapet London under tidigt 1800-tal.'},
+  {id:12, title:'The Witcher',        year:2019, genre:'Fantasy / Action',  poster:'/7vjaCdMw15FEbXyLQTVa04URsPm.jpg',   grad:'linear-gradient(135deg,#0a1a0a,#152015)', platforms:['Netflix'],       desc:'Geralt av Rivia, en ensam monsterjägare, kämpar för sin plats i en komplex och farlig värld.'},
+  {id:13, title:'Ozark',              year:2017, genre:'Drama / Thriller',  poster:'/pCinR2vvQkFbRQHHHxfHkfQKEQh.jpg',   grad:'linear-gradient(135deg,#030d10,#071520)', platforms:['Netflix'],       desc:'En finansrådgivare tvingas flytta familjen till Ozarks för att tvätta pengar åt ett mexikanskt drogkartell.'},
+  {id:14, title:'You',                year:2018, genre:'Thriller / Drama',  poster:'/2Foster2yd0BFiuIGmIZHqsNpNEi.jpg',  grad:'linear-gradient(135deg,#0f0a1a,#18101f)', platforms:['Netflix'],       desc:'En bokhandlare med ett osunt besatthetsbeteende förföljer och manipulerar de kvinnor han förälskar sig i.'},
+  {id:15, title:'Sex Education',      year:2019, genre:'Komedi / Drama',    poster:'/sQNFTIAXeB9f6r0A4k7DaIK0v1M.jpg',   grad:'linear-gradient(135deg,#1a0a10,#25101a)', platforms:['Netflix'],       desc:'En tonåring vars mamma är sexterapeut startar en underjordisk sexklinik på sin skola.'},
+  {id:16, title:'Black Mirror',       year:2011, genre:'Sci-fi / Thriller', poster:'/7PRddO7z7mcPi21nZTCMGShAyy1.jpg',   grad:'linear-gradient(135deg,#050505,#111)',    platforms:['Netflix'],       desc:'Antologiserie som utforskar den mörka sidan av modern teknik och samhälle.'},
+  {id:17, title:'Outer Banks',        year:2020, genre:'Action / Äventyr',  poster:'/b4tdZ3JGfHRVbMEnMGTJiHpvVwV.jpg',   grad:'linear-gradient(135deg,#0a1520,#10202a)', platforms:['Netflix'],       desc:'En grupp tonåringar på en ö försöker lösa ett mysterium kopplat till en försvunnen skatt.'},
+  {id:18, title:'Cobra Kai',          year:2018, genre:'Action / Drama',    poster:'/6OF2BIAudBKFwFMt7z9pT9qY5VR.jpg',   grad:'linear-gradient(135deg,#1a1a0a,#25200f)', platforms:['Netflix'],       desc:'Karate Kid-universumet återuppstår när Johnny Lawrence öppnar Cobra Kai-dojo igen.'},
+  {id:19, title:'Lupin',              year:2021, genre:'Thriller / Action', poster:'/sgxDyuHU10kv3yH4lzfZo1xRIvO.jpg',   grad:'linear-gradient(135deg,#0a0f1a,#101520)', platforms:['Netflix'],       desc:'Inspirerad av Arsène Lupin – hans mission att hämnas sin far mot en rik och mäktig familj i Paris.'},
+  {id:20, title:'Peaky Blinders',     year:2013, genre:'Drama / Brott',     poster:'/vUUqzWa2LnHIVqkFs50Kb5KWdoZ.jpg',   grad:'linear-gradient(135deg,#0a0505,#180d0d)', platforms:['Netflix'],       desc:'En kriminell familj i Birmingham efter första världskriget strävar efter makt och respektabilitet.'},
+  {id:21, title:'The Diplomat',       year:2023, genre:'Drama / Thriller',  poster:'/4QO7PaFQvsm0OE9DjGNflnkxH9Z.jpg',   grad:'linear-gradient(135deg,#08080f,#10101a)', platforms:['Netflix'],       desc:'En oväntat utnämnd USA-ambassadör i London navigerar en internationell kris.'},
+  {id:22, title:'House of Cards',     year:2013, genre:'Drama / Politik',   poster:'/hKlhVTJypdln5Tlxf9JRQGW3Kp5.jpg',   grad:'linear-gradient(135deg,#080808,#10100f)', platforms:['Netflix'],       desc:'En hänsynslös kongresspolitiker intrigerar sig fram mot presidentämbetet.'},
+  {id:23, title:'Sherlock',           year:2010, genre:'Drama / Thriller',  poster:'/7WTsnHkbA0FaG6R9twfFde0I9hl.jpg',   grad:'linear-gradient(135deg,#080808,#0f1010)', platforms:['Netflix'],       desc:'Nutida brittisk tolkning av Sherlock Holmes där detektiven och Watson löser moderna mysterier.'},
+  {id:24, title:'Squid Game S2',      year:2024, genre:'Thriller / Drama',  poster:'/dDlEmu3EZ0Pgg93K2SVNLCjCSvE.jpg',   grad:'linear-gradient(135deg,#0a1f0a,#102a15)', platforms:['Netflix'],       desc:'Gi-hun återvänder till Squid Game med en mission att stoppa organisationen inifrån.'},
+  {id:25, title:'The Haunting of Hill House', year:2018, genre:'Skräck / Drama', poster:'/diD3OHsxYJiWmhYkfmAa2i6OoEi.jpg', grad:'linear-gradient(135deg,#060510,#0d0a1a)', platforms:['Netflix'], desc:'Fem syskon konfronterar skrämmande minnen från uppväxten i ett hemsökt herrgårdshus.'},
+  {id:26, title:'Emily in Paris',     year:2020, genre:'Romantik / Komedi', poster:'/2EBSDKuHKiAuaVXTtfZbSGHbXPN.jpg',   grad:'linear-gradient(135deg,#20051a,#2d0a28)', platforms:['Netflix'],       desc:'En ambitiös ung amerikan från Chicago flyttar till Paris och navigerar kärlek, vänskap och karriär.'},
+  {id:27, title:'The Umbrella Academy', year:2019, genre:'Action / Sci-fi', poster:'/scZlQQqnAHCh8L1CsoMWHQhKoTU.jpg',   grad:'linear-gradient(135deg,#0a0a1a,#14142a)', platforms:['Netflix'],       desc:'En excentrisk miljardär adopterar sju barn med superkrafter – och tjugo år senare återförenas de för att lösa hans mord.'},
+  {id:28, title:'Manifest',           year:2018, genre:'Sci-fi / Drama',    poster:'/bq7UBhFJNRMV8kpILbSSiMpK07L.jpg',   grad:'linear-gradient(135deg,#060a18,#0c1222)', platforms:['Netflix'],       desc:'Passagerarna på ett flyg landar och inser att fem och ett halvt år gått trots att det bara kändes som timmar.'},
+  {id:29, title:'Young Royals',       year:2021, genre:'Drama / Romantik',  poster:'/mON60uumDNJ5RRpZ3lKomkMJPGJ.jpg',   grad:'linear-gradient(135deg,#0a0f15,#121820)', platforms:['Netflix'],       desc:'Svensk serie om en ung prins som kämpar mellan sina kungliga plikter och sin kärlek till en klasskamrat.'},
+  {id:200,title:'Ginny & Georgia',    year:2021, genre:'Drama / Komedi',    poster:'/nZuEKrJSBwJvAGpX7iFQvXD8v7Y.jpg',   grad:'linear-gradient(135deg,#150a1a,#200f25)', platforms:['Netflix'],       desc:'En fri ande och hennes dotter försöker slå rot i en charmig stad i New England – men mamma gömmer mörka hemligheter.'},
+  {id:201,title:'Orange is the New Black', year:2013, genre:'Drama / Komedi', poster:'/dl3eHUoImRjwzE0COaMo7qONXOH.jpg', grad:'linear-gradient(135deg,#0d0510,#180a18)', platforms:['Netflix'],    desc:'En välbärgad kvinna avtjänar ett fängelsestraff och möter ett kalejdoskop av medintagna.'},
+  {id:202,title:'Suits',              year:2011, genre:'Drama / Juridik',   poster:'/wWy3FHkCNtFABU4Z5gqAp77OHJI.jpg',   grad:'linear-gradient(135deg,#0a0808,#150f0d)', platforms:['Netflix'],       desc:'En ung man med fotografiskt minne börjar jobba som advokatassistent utan att ha läst juridik.'},
+
+  /* ── MAX (HBO) ── */
+  {id:30, title:'Game of Thrones',    year:2011, genre:'Fantasy / Drama',   poster:'/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg',   grad:'linear-gradient(135deg,#0f0a0a,#1a1208)', platforms:['Max'],          desc:'Sju ädla familjer slåss om kontrollen över Westeros järntroner medan ett urgammalt hot vaknar i norr.'},
+  {id:31, title:'House of the Dragon', year:2022, genre:'Fantasy / Drama',  poster:'/z2yahl2uefxDCl0nogcRBstwruJ.jpg',   grad:'linear-gradient(135deg,#1a0505,#250808)', platforms:['Max'],          desc:'Förhistorien om huset Targaryen och det inbördeskrig som splittrade dynastin 200 år före Game of Thrones.'},
+  {id:32, title:'The Wire',           year:2002, genre:'Drama / Brott',     poster:'/4lsHZjV9mEPzKT2wb8mdGZFRd9K.jpg',   grad:'linear-gradient(135deg,#080d10,#101820)', platforms:['Max'],          desc:'En detaljerad och realistisk skildring av Baltimores narkotikahandel från både polisens och kriminellas sida.'},
+  {id:33, title:'The Sopranos',       year:1999, genre:'Drama / Brott',     poster:'/rTc7ZXdroqjkKivFPvCPX0Ru7uw.jpg',   grad:'linear-gradient(135deg,#0f0a08,#1a1410)', platforms:['Max'],          desc:'New Jersey-maffiachefen Tony Soprano försöker balansera familjelivet med att leda sin kriminella organisation.'},
+  {id:34, title:'The Last of Us',     year:2023, genre:'Drama / Sci-fi',    poster:'/uKvVjHNqB5VmOrdxqAt2F7J78ED.jpg',   grad:'linear-gradient(135deg,#0a1005,#121a08)', platforms:['Max'],          desc:'En man smugglar en immun tonåring genom ett postapokalyptiskt Amerika infekterat av en soppsvampsparasit.'},
+  {id:35, title:'Succession',         year:2018, genre:'Drama / Komedi',    poster:'/e2X8x5BmkGGqiArWEkvNryjeCio.jpg',   grad:'linear-gradient(135deg,#0a0a0a,#151510)', platforms:['Max'],          desc:'En dysfunktionell mediemogulsfamilj slåss om kontrollen över ett multinationellt mediekonglomerat.'},
+  {id:36, title:'Euphoria',           year:2019, genre:'Drama',             poster:'/3bnEReRoAqWKifGvEpZ43B0UTAF.jpg',   grad:'linear-gradient(135deg,#0f0520,#180a2a)', platforms:['Max'],          desc:'Tonårsstudenter navigerar kärlek, identitet, trauma, droger och sociala medier.'},
+  {id:37, title:'The White Lotus',    year:2021, genre:'Satir / Thriller',  poster:'/oqCISwfLNQllWn5eCR4Gz5yIuR6.jpg',   grad:'linear-gradient(135deg,#1a1205,#251a08)', platforms:['Max'],          desc:'Antologiserie som följer gäster och personal på ett lyxhotell med oväntade konsekvenser.'},
+  {id:38, title:'Barry',              year:2018, genre:'Komedi / Drama',    poster:'/gFbxJELFLf9Q3q9BFEGbp7HQzJY.jpg',   grad:'linear-gradient(135deg,#0a0a0f,#121218)', platforms:['Max'],          desc:'En desillusionerad legosoldats hittar passion för skådespeleri i Los Angeles.'},
+  {id:39, title:'Chernobyl',          year:2019, genre:'Drama / Historia',  poster:'/hlLXt2tOPT6RRnjiUmoxyG1LTFi.jpg',   grad:'linear-gradient(135deg,#0f1205,#18200a)', platforms:['Max'],          desc:'Den dramatiska händelsekedjan bakom Tjernobylkatastrofen 1986 och konsekvenserna för dem inblandade.'},
+  {id:40, title:'True Detective',     year:2014, genre:'Drama / Thriller',  poster:'/fDI6MsDgVDDjCFjqjkrB5hEBxf.jpg',   grad:'linear-gradient(135deg,#080808,#100f0a)', platforms:['Max'],          desc:'Antologiserie om detektiver som löser hemska brott med djupa moraliska och existentiella övertoner.'},
+  {id:41, title:'Band of Brothers',   year:2001, genre:'Drama / Krig',      poster:'/byun4KvCmBBUkFRkIDT60mlVhf0.jpg',   grad:'linear-gradient(135deg,#0a0a05,#150f08)', platforms:['Max'],          desc:'Följer Easy Company från D-Day till Tysklands kapitulation – baserat på sanna händelser.'},
+  {id:42, title:'Boardwalk Empire',   year:2010, genre:'Drama / Brott',     poster:'/lBwPB1mCekjHvaxX5mQdM5CkHhB.jpg',   grad:'linear-gradient(135deg,#080a0f,#101420)', platforms:['Max'],          desc:'Nucky Thompson styr utskänkningsförbudstidens Atlantic City med järnhand på 1920-talet.'},
+  {id:300,title:'Sharp Objects',      year:2018, genre:'Thriller / Drama',  poster:'/jT8kbvQQbbwS4MJk0wJFXnDLpid.jpg',   grad:'linear-gradient(135deg,#0d0508,#180a0f)', platforms:['Max'],          desc:'En reporter återvänder till sin hemstad för att bevaka mord på unga flickor och konfronterar sina egna demoner.'},
+  {id:301,title:'Mare of Easttown',   year:2021, genre:'Thriller / Drama',  poster:'/rjqiSmYXsMaGGGkFHPkGW5PnhQU.jpg',   grad:'linear-gradient(135deg,#0a0a10,#121218)', platforms:['Max'],          desc:'En liten stads kriminalinspektör undersöker ett mord och kämpar med familjens och samhällets förväntningar.'},
+  {id:302,title:'The Gilded Age',     year:2022, genre:'Drama / Historia',  poster:'/fLbceTQHqCKHuZDMFcHfMKDNTfr.jpg',   grad:'linear-gradient(135deg,#150e05,#201508)', platforms:['Max'],          desc:'Ny Yorks högsocietet på 1880-talet – gamla pengar möter ny rikedom i ett samhälle under förändring.'},
+  {id:303,title:'Silicon Valley',     year:2014, genre:'Komedi / Satir',    poster:'/k2xOymFHFZ3f7vfJEDFpHJGWGC8.jpg',   grad:'linear-gradient(135deg,#080d18,#101820)', platforms:['Max'],          desc:'En programmerare i Silicon Valley försöker bygga upp ett startup-företag medan han navigerar tech-branschens absurda värld.'},
+  {id:304,title:'Veep',               year:2012, genre:'Komedi / Satir',    poster:'/eTdoMCSwT5pCDpYLUNxjkXUJh.jpg',     grad:'linear-gradient(135deg,#0c1005,#151810)', platforms:['Max'],          desc:'Den inkompetente vicepresidenten Selina Meyer och hennes team navigerar Washingtons politiska korridorer.'},
+  {id:305,title:'Friends',            year:1994, genre:'Komedi',            poster:'/f496cm9enuEsZkSPzCwnTESEK5s.jpg',    grad:'linear-gradient(135deg,#10080a,#1a1010)', platforms:['Max'],          desc:'Sex vänner navigerar livet, kärleken och karriären i New York under 10 år av glädje och missöden.'},
+  {id:306,title:'The Deuce',          year:2017, genre:'Drama / Brott',     poster:'/a5q7IA3AvE1vMbvvhJHF1P9lCdz.jpg',   grad:'linear-gradient(135deg,#0f0a05,#1a1208)', platforms:['Max'],          desc:'Porrindustrins uppkomst i 1970-talets New York, berättad genom karaktärerna i Times Squares granskmiljö.'},
+
+  /* ── DISNEY+ ── */
+  {id:50, title:'The Mandalorian',    year:2019, genre:'Sci-fi / Action',   poster:'/eU1i6eHXlzMqdjGiDL4TxT8ohBH.jpg',   grad:'linear-gradient(135deg,#0a0f1a,#101520)', platforms:['Disney+'],      desc:'En ensam galaktisk dussinbeting tar sig an ett mystiskt uppdrag och hittar ett barn med extraordinära krafter.'},
+  {id:51, title:'Andor',             year:2022, genre:'Sci-fi / Thriller',  poster:'/59SVNwLfoMnZPPB6ukW6dlTrEI0.jpg',   grad:'linear-gradient(135deg,#060810,#0c1018)', platforms:['Disney+'],      desc:'Förhistorien om rebellen Cassian Andor och hur Rebellionen mot imperiet tog form.'},
+  {id:52, title:'The Bear',          year:2022, genre:'Drama / Komedi',    poster:'/f7imMkRKPjFOGlEg0ZrJmXqLJID.jpg',   grad:'linear-gradient(135deg,#0f0a07,#1a1208)', platforms:['Disney+'],      desc:'En prisvinnande kock tvingas ta över sin familjs smörgåsbutik i Chicago och navigerar kaos och trauma.'},
+  {id:53, title:'Shogun',            year:2024, genre:'Drama / Historia',  poster:'/7O4iVfOMQmdCSxhOg1WnzG1AgYT.jpg',   grad:'linear-gradient(135deg,#0a0808,#150f0a)', platforms:['Disney+'],      desc:'En engelsk sjöman hamnar i feodalt Japan och fastnar i politiska intriger mellan rivaliserande krigsherrar.'},
+  {id:54, title:'Only Murders in the Building', year:2021, genre:'Komedi / Thriller', poster:'/olMNSamx1kSiEHtaVDlW5tCVbpZ.jpg', grad:'linear-gradient(135deg,#0f0a1a,#181020)', platforms:['Disney+'], desc:'Tre grannar i ett New York-lyxhus startar en true crime-podcast när ett mord sker i deras byggnad.'},
+  {id:55, title:'Atlanta',           year:2016, genre:'Komedi / Drama',    poster:'/lWlsZIsrGVWHtBeoOeLxIKDd9iy.jpg',   grad:'linear-gradient(135deg,#0a100a,#101810)', platforms:['Disney+'],      desc:'Earning försöker styra sin kusins rapkarriär i Atlanta och navigerar absurda situationer.'},
+  {id:56, title:'What We Do in the Shadows', year:2019, genre:'Komedi / Skräck', poster:'/k9tv1rXZbOhH7sMsB9M5HBui6U.jpg', grad:'linear-gradient(135deg,#0f0510,#1a0818)', platforms:['Disney+'], desc:'Mockumentär om fyra vampyrer som delar ett hus i New York och kämpar med det moderna livet.'},
+  {id:57, title:'Lost',              year:2004, genre:'Sci-fi / Drama',    poster:'/2p3vKq8XNKMbKuEFDMUuKNDuNpj.jpg',   grad:'linear-gradient(135deg,#081008,#101812)', platforms:['Disney+'],      desc:'Överlevande från ett flygplansvrak fastnar på en mystisk ö med hemligheter bortom deras förståelse.'},
+  {id:400,title:'Abbott Elementary',  year:2021, genre:'Komedi',           poster:'/kFrjgNMBgfWMIXaFGWo0WVkO2b7.jpg',   grad:'linear-gradient(135deg,#0a0f18,#101820)', platforms:['Disney+'],      desc:'Mockumentär om lärare på en underfundad grundskola i Philadelphia som kämpar med hjärta och humor.'},
+  {id:401,title:'Prison Break',       year:2005, genre:'Thriller / Action', poster:'/fzJfdjQxfDhqfIlkgZN4lHqVQzF.jpg',  grad:'linear-gradient(135deg,#0f0808,#1a1010)', platforms:['Disney+'],      desc:'En man låter sig dömas till dödsstraff för att ta sig in i samma fängelse som sin bror och bryta honom fri.'},
+  {id:402,title:'Criminal Minds',     year:2005, genre:'Thriller / Brott', poster:'/dm2QRbHZJ3mXJBE2s6qGmzxXC4z.jpg',   grad:'linear-gradient(135deg,#080508,#100c10)', platforms:['Disney+'],      desc:'FBI:s Behavioral Analysis Unit profilerar seriekriminella och seriemördare för att lösa grova brott.'},
+  {id:403,title:'Daredevil: Born Again', year:2025, genre:'Action / Superhero', poster:'/b2iC0VjMBGpCDKsXe5K1FRFaOxD.jpg', grad:'linear-gradient(135deg,#1a0505,#250808)', platforms:['Disney+'],  desc:'Matt Murdock återvänder som Daredevil och konfronteras av Kingpin som verkar i politikens värld.'},
+  {id:404,title:'Grey\'s Anatomy',    year:2005, genre:'Drama / Medicin',  poster:'/clnyhPqj1SNgpAdeSS6a6fwE6Bo.jpg',   grad:'linear-gradient(135deg,#071018,#0c1822)', platforms:['Disney+'],      desc:'Unga läkaraspiranter navigerar professionella och personliga utmaningar på ett sjukhus i Seattle.'},
+
+  /* ── PRIME VIDEO ── */
+  {id:60, title:'The Boys',          year:2019, genre:'Action / Sci-fi',   poster:'/stTEycfG9928HYGEISBFaG1ngjM.jpg',   grad:'linear-gradient(135deg,#1a0a0a,#220d0d)', platforms:['Prime Video'],  desc:'I en värld där superkrafter är normalt tar en grupp vigilanter upp kampen mot korrumperade superhjältar.'},
+  {id:61, title:'Reacher',           year:2022, genre:'Action / Thriller', poster:'/iV1nPzmPHMWB1o3jO4oNLRSdDLU.jpg',   grad:'linear-gradient(135deg,#0f0a07,#1a120a)', platforms:['Prime Video'],  desc:'En ensam ex-militärspecialist hamnar i en liten stad och stöter på ett nät av korruption och brott.'},
+  {id:62, title:'Jack Ryan',         year:2018, genre:'Action / Thriller', poster:'/vhkqfB6WJLI5sqdRWkUREaWaKw4.jpg',   grad:'linear-gradient(135deg,#050f1a,#0a1820)', platforms:['Prime Video'],  desc:'CIA-analytikern Jack Ryan dras in i en farlig fältkampanj när han spårar ett framväxande terroristhot.'},
+  {id:63, title:'The Rings of Power', year:2022, genre:'Fantasy / Äventyr', poster:'/mute8LxjrBaa9I7RNbhHDwALl0Z.jpg',  grad:'linear-gradient(135deg,#0f0f05,#1a1808)', platforms:['Prime Video'],  desc:'Episk fantasy i Tolkiens Mittjorden under den Andra Åldern – tusentals år innan Härskarringen.'},
+  {id:64, title:'Invincible',        year:2021, genre:'Action / Sci-fi',   poster:'/yDWJYRAwMNKbIYT8ZB33qy84uzO.jpg',   grad:'linear-gradient(135deg,#0a0a1f,#101025)', platforms:['Prime Video'],  desc:'Mark Grayson ärver sin fars superkrafter och lär sig att bära manteln som hjälte med svåra konsekvenser.'},
+  {id:65, title:'Fleabag',           year:2016, genre:'Komedi / Drama',    poster:'/2gDMJAX78G2Vc4M1RXFoqGfBGgW.jpg',   grad:'linear-gradient(135deg,#100a0f,#1a1018)', platforms:['Prime Video'],  desc:'En brittisk kvinna berättar om sin dysfunktionella tillvaro i London med briljant mörk humor.'},
+  {id:66, title:'The Marvelous Mrs. Maisel', year:2017, genre:'Komedi / Drama', poster:'/2MYSQGxJBCBYFZIKTRVA1vkAqOp.jpg', grad:'linear-gradient(135deg,#1a050a,#220810)', platforms:['Prime Video'], desc:'En överklasskvinnas i 1950-talets New York börjar en karriär som ståuppkomiker efter att hennes man lämnar henne.'},
+  {id:67, title:'Mr. Robot',         year:2015, genre:'Thriller / Drama',  poster:'/oKIBhzZzDX07SoE2bOLhZnm3cmd.jpg',   grad:'linear-gradient(135deg,#050505,#0d0d12)', platforms:['Prime Video'],  desc:'En socialt isolerad hacker rekryteras av en mystisk anarkist för att ta ner ett globalt företagsimperium.'},
+  {id:68, title:'Fallout',           year:2024, genre:'Sci-fi / Action',   poster:'/fAMOW9SfJCKq8W5G1UxBWxmWwvg.jpg',   grad:'linear-gradient(135deg,#0a1005,#10180a)', platforms:['Prime Video'],  desc:'Baserat på spelet – en kvinna kliver ut ur sin underjordiska bunker och möter ett ödelagt postapokalyptiskt USA.'},
+  {id:500,title:'Good Omens',        year:2019, genre:'Komedi / Fantasy',  poster:'/gPB9eY6FepKmOBW1TnpQPxsWfm5.jpg',   grad:'linear-gradient(135deg,#100a1a,#181525)', platforms:['Prime Video'],  desc:'En ängel och en demon är de enda som kan förhindra Armageddon – om de bara kan komma överens.'},
+  {id:501,title:'The Wheel of Time', year:2021, genre:'Fantasy / Äventyr', poster:'/m8VU0XnPHQQLv5bSjlQqS8uCFuE.jpg',   grad:'linear-gradient(135deg,#0a100a,#0f1a10)', platforms:['Prime Video'],  desc:'En mäktig magikerska söker den person som antingen kan rädda eller förstöra världen.'},
+  {id:502,title:'Upload',            year:2020, genre:'Sci-fi / Komedi',   poster:'/9aS5pcGLcT8AIMZjfMkN0KMWTf0.jpg',   grad:'linear-gradient(135deg,#08081a,#101025)', platforms:['Prime Video'],  desc:'I en nära framtid kan döende människor ladda upp sitt medvetande till ett virtuellt paradis.'},
+  {id:503,title:'The Office',        year:2005, genre:'Komedi',            poster:'/qWnJzyZhyy74gjpSjIXWmuk0ifX.jpg',   grad:'linear-gradient(135deg,#0a0f10,#121820)', platforms:['Prime Video'],  desc:'Mockumentär om livet på ett pappersföretag i Scranton under den excentriske chefen Michael Scott.'},
+
+  /* ── APPLE TV+ ── */
+  {id:70, title:'Severance',         year:2022, genre:'Sci-fi / Thriller', poster:'/pnxxDNhJOCrzLaBdBe8MH6CRjsCQ.jpg',  grad:'linear-gradient(135deg,#050510,#0a0a1a)', platforms:['Apple TV+'],    desc:'Anställda på Lumon Industries genomgår en procedur som separerar deras arbetsminnen från deras privatliv.'},
+  {id:71, title:'Ted Lasso',         year:2020, genre:'Komedi / Sport',    poster:'/nNlRBtWmokxpRSjAmSFWqhFRzV4.jpg',   grad:'linear-gradient(135deg,#0a1205,#12200a)', platforms:['Apple TV+'],    desc:'En optimistisk amerikansk fotbollstränare anställs för att leda ett engelskt fotbollslag han ingenting vet om.'},
+  {id:72, title:'The Morning Show',  year:2019, genre:'Drama',             poster:'/gGMPFJgfQGWcgKNOhGBFbKnLKkb.jpg',   grad:'linear-gradient(135deg,#0a0510,#120a18)', platforms:['Apple TV+'],    desc:'Bakom kulisserna i ett morgon-TV-program avslöjas makt, skandal och de som arbetar i dess skugga.'},
+  {id:73, title:'Slow Horses',       year:2022, genre:'Thriller / Spionage', poster:'/ioFAR02pFPCpHQCLcv3nEbcBtb.jpg', grad:'linear-gradient(135deg,#080808,#100f0d)', platforms:['Apple TV+'],    desc:'Misslyckade MI5-agenter hanterar smutsiga operationer som deras byrå vill hålla hemliga.'},
+  {id:74, title:'Shrinking',         year:2023, genre:'Komedi / Drama',    poster:'/xVm6i9L8bCGf2Mdo7XGpjRpOTSp.jpg',   grad:'linear-gradient(135deg,#0a0f10,#121820)', platforms:['Apple TV+'],    desc:'En sörjande terapeut bryter mot reglerna och börjar säga exakt vad han tänker till sina patienter.'},
+  {id:75, title:'For All Mankind',   year:2019, genre:'Sci-fi / Drama',    poster:'/ccFc61VBHiqU5A04Upe0NXNON4.jpg',    grad:'linear-gradient(135deg,#050510,#080818)', platforms:['Apple TV+'],    desc:'Alternativ historia där Sovjet landade på månen först och rymdkapplöpningen aldrig tog slut.'},
+  {id:76, title:'Bad Sisters',       year:2022, genre:'Komedi / Thriller', poster:'/usCFmEG9gVKCBRkS7Dh7cNRLFJX.jpg',   grad:'linear-gradient(135deg,#0a0f05,#121808)', platforms:['Apple TV+'],    desc:'Fyra systrar planerar att döda sin systers fruktansvärda make i denna mörka irländska komediserie.'},
+  {id:77, title:'Hijack',            year:2023, genre:'Thriller / Action', poster:'/4f2JXEKqgVHkf3UEhGmsmhsY3L5.jpg',   grad:'linear-gradient(135deg,#05080f,#0a1018)', platforms:['Apple TV+'],    desc:'En affärsförhandlare kämpar i realtid för att rädda 200 passagerare under ett terroriststyrt flygplanskapning.'},
+  {id:600,title:'Dark Matter',       year:2024, genre:'Sci-fi / Thriller', poster:'/9XaMOnBMVzHUHUjGTiMbqSMEVca.jpg',   grad:'linear-gradient(135deg,#050510,#0c0c1a)', platforms:['Apple TV+'],    desc:'En kvantfysiker kidnappas och vaknar i ett parallellt universum där hans liv ser ut på ett helt annat sätt.'},
+  {id:601,title:'Presumed Innocent', year:2024, genre:'Thriller / Drama',  poster:'/pgHZ2UMhMmDpMOJdl7gkMJIuL7k.jpg',   grad:'linear-gradient(135deg,#070810,#0e1018)', platforms:['Apple TV+'],    desc:'En åklagare misstänks för mordet på sin kollega och älskling och måste kämpa för att bevisa sin oskuld.'},
+  {id:602,title:'Monarch: Legacy of Monsters', year:2023, genre:'Sci-fi / Action', poster:'/odVv4kHqIhMUHoqGBb0UzUJg9Uf.jpg', grad:'linear-gradient(135deg,#0a1205,#101a08)', platforms:['Apple TV+'], desc:'Familjer på jakt efter svar fastnar i Monarch, den hemliga organisationen som bevakar gigantiska monster.'},
+
+  /* ── VIAPLAY ── */
+  {id:80, title:'Vikings',           year:2013, genre:'Drama / Historia',  poster:'/mMZRKb3NVo5ZeSPEIaNW9buLWQ0.jpg',   grad:'linear-gradient(135deg,#0a0808,#150f0d)', platforms:['Viaplay'],      desc:'Sagaen om Ragnar Lothbrok och hans söner som erövrar och utforskar nya land under vikingarnas tidsålder.'},
+  {id:81, title:'Broen',             year:2011, genre:'Thriller / Brott',  poster:'/2bIigoNjdLrpvv5G5EoLObTWdOm.jpg',   grad:'linear-gradient(135deg,#050810,#0a1018)', platforms:['Viaplay'],      desc:'En dansk och en svensk kriminalinspektör samarbetar när ett mord begås mitt på Öresundsbron.'},
+  {id:82, title:'Beforeigners',      year:2019, genre:'Sci-fi / Brott',    poster:'/aaxmf3f9YelrHwJAzTd6YBvJeZ3.jpg',   grad:'linear-gradient(135deg,#080a10,#0f1018)', platforms:['Viaplay'],      desc:'Norsk sci-fi om en tid när folk från det förflutna – vikingar, stenåldersmänniskor – dyker upp i nutida Norge.'},
+  {id:700,title:'Wisting',           year:2019, genre:'Thriller / Brott',  poster:'/3y5Wr5oMIDJhXLYmD6HcHqzr2fB.jpg',   grad:'linear-gradient(135deg,#060810,#0a1018)', platforms:['Viaplay'],      desc:'Norsk kriminalinspektör William Wisting kopplar ett norskt mord till en FBI-jagad amerikansk seriemördare.'},
+  {id:701,title:'Bordertown',        year:2016, genre:'Thriller / Brott',  poster:'/A3zEBMdYYQdTfnQ9r6IuJe7IGOX.jpg',   grad:'linear-gradient(135deg,#080808,#101010)', platforms:['Viaplay'],      desc:'Finsk kriminalinspektör i gränsorten Lappeenranta löser brott med sin skarpa analytiska förmåga.'},
+  {id:702,title:'Deadwater Fell',    year:2020, genre:'Thriller / Drama',  poster:'/7J9YDCmExEFOKSnIJzMzCLWkFz1.jpg',   grad:'linear-gradient(135deg,#050810,#0a1018)', platforms:['Viaplay'],      desc:'En till synes perfekt skotsk familj mördas och utredningen avslöjar djupt dolda hemligheter.'},
+
+  /* ── C MORE ── */
+  {id:85, title:'Yellowjackets',     year:2021, genre:'Thriller / Drama',  poster:'/azQ5JNLBGB4sNnXLERByKtJmMPm.jpg',   grad:'linear-gradient(135deg,#0f0d05,#1a1808)', platforms:['C More'],       desc:'Gymnasieflickor fastnar i vildmarken efter ett flygplansvrak, med mörka hemligheter 25 år senare.'},
+  {id:86, title:'Billions',          year:2016, genre:'Drama / Thriller',  poster:'/uvRsOgxlbPCnjQhaNZXkPsFpE1k.jpg',   grad:'linear-gradient(135deg,#0a0a05,#141412)', platforms:['C More'],       desc:'En hänsynslös hedgefondchef i New York hamnar i klinch med en ambitiös federal åklagare.'},
+  {id:87, title:'Homeland',          year:2011, genre:'Thriller / Spionage', poster:'/6dmDFYjHKkTFPQBNguyJaX6PKJD.jpg', grad:'linear-gradient(135deg,#0a0508,#14080f)', platforms:['C More'],       desc:'En CIA-agent misstänker att en krigshjälte som vände hem är hjärntvättad terrorist.'},
+  {id:88, title:'Dexter',            year:2006, genre:'Drama / Thriller',  poster:'/58H6Ctze1nnpS1VgFNVBVmxIPAZ.jpg',   grad:'linear-gradient(135deg,#1a0505,#220808)', platforms:['C More'],       desc:'En rättsmedicinsk analytiker hos Miami PD lever ett dubbelliv som vigilantistmördare med egna regler.'},
+  {id:89, title:'Ray Donovan',       year:2013, genre:'Drama / Thriller',  poster:'/uIyaFMBKIyELqazVMwYhsUoAyFb.jpg',   grad:'linear-gradient(135deg,#0d0a08,#18130f)', platforms:['C More'],       desc:'En professionell fixare i Hollywood löser rika klienters problem medan han kämpar med sin dysfunktionella familj.'},
+  {id:800,title:'Weeds',             year:2005, genre:'Komedi / Drama',    poster:'/dMbAFkx8BXNZLYD7oYqFLcl0ys0.jpg',   grad:'linear-gradient(135deg,#0a1305,#12200a)', platforms:['C More'],       desc:'En änka i förorten börjar sälja marijuana för att hålla familjen flytande efter makens plötsliga bortgång.'},
+  {id:801,title:'Shameless',         year:2011, genre:'Komedi / Drama',    poster:'/2ce4qP9oDipG6kEbmGBLkblQN7E.jpg',   grad:'linear-gradient(135deg,#0f0808,#1a1010)', platforms:['C More'],       desc:'Den dysfunktionella Gallagher-familjen på Chicagos sydside kämpar för att överleva med ett alkoholiserat överhuvud.'},
+  {id:802,title:'Californication',   year:2007, genre:'Komedi / Drama',    poster:'/3c48n5aNMHXdnT9Bm4ARe78nyWg.jpg',   grad:'linear-gradient(135deg,#180a05,#221008)', platforms:['C More'],       desc:'En framgångsrik Los Angeles-författare kämpar med alkohol, sex och kreativ blockering.'},
+
+  /* ── SKYSHOWTIME ── */
+  {id:90, title:'Yellowstone',       year:2018, genre:'Drama / Western',   poster:'/1S2Kh8MXCPJ1GrJuNMbPi1DZDP1.jpg',   grad:'linear-gradient(135deg,#0a0807,#15110a)', platforms:['SkyShowtime'],  desc:'Ranchägaren John Dutton skyddar sin familjs mark mot fastighetsbolag och nationalparken i Montana.'},
+  {id:91, title:'1923',              year:2022, genre:'Drama / Western',   poster:'/fOy2Jurz9k6RnJnMPDKFqKHVPjK.jpg',   grad:'linear-gradient(135deg,#0a0c10,#10141a)', platforms:['SkyShowtime'],  desc:'Förhistorien om Dutton-familjen under den amerikanska frontepoken på 1920-talet.'},
+  {id:92, title:'Tulsa King',        year:2022, genre:'Drama / Komedi',    poster:'/oOpFSbHQxHbqVMHyPrfVXNQTsHF.jpg',   grad:'linear-gradient(135deg,#0f0808,#1a1010)', platforms:['SkyShowtime'],  desc:'En New York-maffiaboss skickas till Tulsa och tvingas bygga upp ett nytt imperium i okänt territorium.'},
+  {id:93, title:'Halo',              year:2022, genre:'Sci-fi / Action',   poster:'/i1hCFHQqxXHkleNmLfCrpAoXHYK.jpg',   grad:'linear-gradient(135deg,#070f18,#0e1820)', platforms:['SkyShowtime'],  desc:'Baserat på spelen – Master Chief leder mänsklighetens kamp mot den utomjordiska Covenant-alliansen.'},
+  {id:94, title:'Mayor of Kingstown', year:2021, genre:'Drama / Thriller', poster:'/9rtDJkfXGZsNZRrViFZsMqomMpd.jpg',   grad:'linear-gradient(135deg,#080808,#101010)', platforms:['SkyShowtime'],  desc:'Familjen McLusky fungerar som mellanhänder för makt i en stad vars ekonomi kretsar kring fängelsekomplexet.'},
+  {id:95, title:'Star Trek: Strange New Worlds', year:2022, genre:'Sci-fi', poster:'/nBCtP5d4GmB9kMoWBBOzWBLfngk.jpg', grad:'linear-gradient(135deg,#050a10,#0a1018)', platforms:['SkyShowtime'], desc:'Kapten Pike och USS Enterprise utforskar nya världar i Star Treks klassiska anda av äventyr och humanism.'},
+  {id:900,title:'Dexter: New Blood',  year:2021, genre:'Drama / Thriller', poster:'/y4UD7xVVBYf0IocDIBFdNoNlXLn.jpg',   grad:'linear-gradient(135deg,#1a0505,#220808)', platforms:['SkyShowtime'],  desc:'Dexter Morgan lever anonymt i en liten stad i Vermont tills ett nytt mord väcker hans mörka sida.'},
+  {id:901,title:'1883',               year:2021, genre:'Drama / Western',  poster:'/fJuHJGOIbEDRhJSzBQ7jM7YZy3O.jpg',  grad:'linear-gradient(135deg,#100a05,#1a1208)', platforms:['SkyShowtime'],  desc:'Dutton-familjens förfäder reser västerut längs Oregon Trail under extremely svåra förhållanden.'},
+
+  /* ── PARAMOUNT+ ── */
+  {id:95, title:'Yellowjackets',     year:2021, genre:'Thriller / Drama',  poster:'/azQ5JNLBGB4sNnXLERByKtJmMPm.jpg',   grad:'linear-gradient(135deg,#0f0d05,#1a1808)', platforms:['Paramount+'],   desc:'Gymnasieflickor fastnar i vildmarken efter ett flygplansvrak, med mörka hemligheter 25 år senare.'},
+  {id:950,title:'Frasier',            year:2023, genre:'Komedi',           poster:'/7RyHsn8LG054pcbqwpoBn8jHzOR.jpg',   grad:'linear-gradient(135deg,#0a0f18,#101820)', platforms:['Paramount+'],   desc:'Dr. Frasier Crane är tillbaka i Boston efter år i Seattle och försöker navigera ett nytt kapitel i sitt liv.'},
+  {id:951,title:'iCarly',             year:2021, genre:'Komedi',           poster:'/bCyNjCFJyAzOTMiXR1pBSTjipfM.jpg',   grad:'linear-gradient(135deg,#0a0f1a,#10151f)', platforms:['Paramount+'],   desc:'Carly Shay återvänder i en ny serie för vuxna fans, med teman om kärlek, karriär och vänskap.'},
+  {id:952,title:'Star Trek: Discovery', year:2017, genre:'Sci-fi',        poster:'/mBFJBrPHY3pEkn6Vr23SFnKePqF.jpg',   grad:'linear-gradient(135deg,#050a12,#0a1018)', platforms:['Paramount+'],   desc:'Michael Burnham och USS Discovery utforskar det okäntas gränser ytterligare in i framtiden.'},
+
+  /* ── SVT PLAY ── */
+  {id:100,title:'Solsidan',           year:2010, genre:'Komedi',           poster:null,                                   grad:'linear-gradient(135deg,#0a1010,#101a1a)', platforms:['SVT Play'],     desc:'Komedi om livet i storstadsförorten Saltsjöbaden och allt från villarenoveringar till relationskaos.'},
+  {id:101,title:'Bonusfamiljen',      year:2017, genre:'Drama / Komedi',   poster:null,                                   grad:'linear-gradient(135deg,#0a0f0a,#121812)', platforms:['SVT Play'],     desc:'Svensk dramakomediserie om de utmaningar och glädjeämnen som uppstår i en bonusfamilj.'},
+  {id:102,title:'Tunna blå linjen',   year:2018, genre:'Drama / Brott',    poster:null,                                   grad:'linear-gradient(135deg,#050810,#0a1018)', platforms:['SVT Play'],     desc:'En erfaren polischef i Stockholm brottas med utbrändhet, lojalitet och korruption inom kåren.'},
+  {id:103,title:'Modus',              year:2015, genre:'Thriller / Brott', poster:'/3gMbVFBbDLGVAFT8cEsI9j1bOrY.jpg',   grad:'linear-gradient(135deg,#060810,#0a1018)', platforms:['SVT Play'],     desc:'Profileren Inger Johanne Vik utbildar poliser och dras in i utredningar av grova brott i Sverige och Norge.'},
+  {id:104,title:'Gåsmamman',          year:2020, genre:'Drama / Thriller', poster:'/dHw9nFcLnFnAHU5K8GmSwmQxIzf.jpg',   grad:'linear-gradient(135deg,#0a0810,#100f18)', platforms:['SVT Play'],     desc:'En kvinna försöker lämna kriminaliteten bakom sig men tvingas ta ett sista uppdrag för att skydda sin familj.'},
+
+  /* ── TV4 PLAY ── */
+  {id:105,title:'Fröken Detective',   year:2023, genre:'Komedi / Brott',   poster:null,                                   grad:'linear-gradient(135deg,#0a0a0f,#101015)', platforms:['TV4 Play'],     desc:'Komedi om en naiv ung kvinna som mot alla odds löser brott i en liten svensk stad.'},
+  {id:106,title:'Beck',               year:1997, genre:'Thriller / Brott', poster:'/7d1LOUl9dpUioMJDIlAM0FEKsMo.jpg',   grad:'linear-gradient(135deg,#080810,#101018)', platforms:['TV4 Play'],     desc:'Stockholmsdetektiven Martin Beck löser komplicerade mordfall med sin pålitliga partner Gun.'},
 ];
 
 let activePlatform = 'all';
@@ -249,7 +380,7 @@ function runSearch() {
   sec.style.display = 'block';
   document.getElementById('search-label').textContent = 'Resultat för "' + raw + '"  ';
   if (!results.length) {
-    grid.innerHTML = '<div class="empty-state"><div class="big">&#x1F615;</div><p>Inga serier hittades för <strong>"' + esc(raw) + '"</strong>.<br>Prova ett annat stavning – databasen täcker ' + SHOWS.length + ' populära serier.</p></div>';
+    grid.innerHTML = '<div class="empty-state"><div class="big">&#x1F615;</div><p>Inga serier hittades för <strong>"' + esc(raw) + '"</strong>.<br>Databasen täcker ' + SHOWS.length + ' serier.</p></div>';
   } else {
     renderGrid(grid, results);
   }
@@ -263,9 +394,11 @@ function renderGrid(container, shows) {
   }
   container.innerHTML = shows.map(s => {
     const pills = s.platforms.map(p => '<span class="platform-pill ' + getPlatCls(p) + '">' + esc(p) + '</span>').join('');
+    const imgTag = s.poster ? '<img src="' + IMG + s.poster + '" alt="" loading="lazy" onerror="this.style.display=\'none\'" />' : '';
     return '<div class="card" onclick="openModal(' + s.id + ')">'
       + '<div class="card-poster">'
-      + '<div class="card-poster-bg" style="background:' + s.grad + '"><span class="genre-icon">' + s.icon + '</span></div>'
+      + '<div class="card-poster-bg" style="background:' + s.grad + '"></div>'
+      + imgTag
       + '<div class="card-poster-gradient"></div>'
       + '</div>'
       + '<div class="card-info">'
@@ -285,10 +418,11 @@ function openModal(id) {
       + '<div><div class="provider-name">' + esc(p) + '</div><div class="provider-type">' + (m.type||'') + '</div></div>'
       + '</div>';
   }).join('');
+  const bannerImg = show.poster ? '<img src="' + IMG_W + show.poster + '" alt="" onerror="this.style.display=\'none\'" />' : '';
   document.getElementById('modal-inner').innerHTML =
     '<div class="modal-banner">'
     + '<div class="modal-banner-bg" style="background:' + show.grad + '"></div>'
-    + '<div class="genre-icon-big">' + show.icon + '</div>'
+    + bannerImg
     + '<div class="modal-banner-gradient"></div>'
     + '</div>'
     + '<div class="modal-body">'
@@ -298,7 +432,7 @@ function openModal(id) {
     + '<div class="streaming-section"><h3>Streama i Sverige</h3>'
     + (show.platforms.length
         ? '<div class="provider-grid">' + providerCards + '</div>'
-        : '<div class="not-available">&#x1F615; Hittades inte på någon plattform i databasen just nu.</div>')
+        : '<div class="not-available">Hittades inte på någon plattform i databasen just nu.</div>')
     + '</div></div>';
   document.getElementById('overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
