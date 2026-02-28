@@ -3,6 +3,513 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Var kan jag streama?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0d0d14;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      padding: 60px 20px 30px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 6vw, 3.8rem);
+      background: linear-gradient(90deg, #a78bfa, #f0c060, #f87171);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      color: #6b7fa0;
+      font-size: 1rem;
+      font-weight: 300;
+    }
+
+    #api-banner {
+      background: #1e1030;
+      border: 1px solid #7c3aed50;
+      border-radius: 12px;
+      padding: 14px 20px;
+      max-width: 700px;
+      width: calc(100% - 40px);
+      margin: 0 auto 24px;
+      font-size: 0.85rem;
+      color: #c084fc;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    #api-banner a { color: #f0c060; text-decoration: underline; }
+
+    #api-banner input {
+      flex: 1;
+      min-width: 160px;
+      background: #0d0d14;
+      border: 1px solid #7c3aed50;
+      border-radius: 8px;
+      padding: 6px 12px;
+      color: #e2e8f0;
+      font-size: 0.83rem;
+      outline: none;
+      font-family: monospace;
+    }
+
+    #api-banner input:focus { border-color: #a78bfa; }
+
+    .search-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 700px;
+      padding: 0 20px;
+      margin-bottom: 8px;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      background: #161626;
+      border: 2px solid #2a2a4a;
+      border-radius: 16px;
+      padding: 18px 60px 18px 24px;
+      font-size: 1.1rem;
+      color: #e2e8f0;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .search-wrap input::placeholder { color: #404060; }
+
+    .search-wrap input:focus {
+      border-color: #a78bfa;
+      box-shadow: 0 0 0 4px #a78bfa18;
+    }
+
+    .search-wrap .search-icon {
+      position: absolute;
+      right: 36px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.3rem;
+      pointer-events: none;
+    }
+
+    #suggestions {
+      width: calc(100% - 40px);
+      max-width: 700px;
+      background: #161626;
+      border: 1px solid #2a2a4a;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 32px;
+      display: none;
+    }
+
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-bottom: 1px solid #1e1e30;
+    }
+
+    .suggestion-item:last-child { border-bottom: none; }
+    .suggestion-item:hover { background: #1e1e38; }
+
+    .suggestion-item img {
+      width: 36px;
+      height: 54px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: #2a2a4a;
+      flex-shrink: 0;
+    }
+
+    .sug-poster-placeholder {
+      width: 36px;
+      height: 54px;
+      border-radius: 6px;
+      background: #2a2a4a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .sug-title { font-weight: 600; font-size: 0.95rem; }
+    .sug-year { color: #6b7fa0; font-size: 0.8rem; margin-top: 2px; }
+
+    #result {
+      width: calc(100% - 40px);
+      max-width: 900px;
+      margin-bottom: 60px;
+      display: none;
+    }
+
+    .show-header {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 32px;
+      align-items: flex-start;
+    }
+
+    .show-poster {
+      width: 130px;
+      min-width: 130px;
+      height: 195px;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 8px 32px #00000080;
+    }
+
+    .show-poster-placeholder {
+      width: 130px;
+      min-width: 130px;
+      height: 195px;
+      border-radius: 12px;
+      background: #1e1e30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .show-meta { flex: 1; padding-top: 4px; }
+
+    .show-meta h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: #f0f0f0;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .year-genre { color: #6b7fa0; font-size: 0.88rem; margin-bottom: 12px; }
+
+    .overview {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 4;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .stream-section {
+      background: #12121f;
+      border: 1px solid #1e1e30;
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .stream-section h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #a78bfa;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stream-category { margin-bottom: 22px; }
+    .stream-category:last-child { margin-bottom: 0; }
+
+    .stream-category-label {
+      font-size: 0.75rem;
+      color: #4a5568;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .provider-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .provider {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .provider img {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px #00000060;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .provider:hover img {
+      transform: scale(1.1);
+      box-shadow: 0 8px 20px #00000080;
+    }
+
+    .provider span {
+      font-size: 0.7rem;
+      color: #6b7fa0;
+      text-align: center;
+      max-width: 70px;
+    }
+
+    .no-stream {
+      padding: 32px;
+      text-align: center;
+      color: #4a5568;
+      font-size: 1rem;
+    }
+
+    .no-stream .emoji { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+
+    #loading {
+      display: none;
+      padding: 40px;
+      text-align: center;
+      color: #6b7fa0;
+    }
+
+    .loader {
+      display: inline-block;
+      width: 38px;
+      height: 38px;
+      border: 3px solid #2a2a4a;
+      border-top-color: #a78bfa;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    footer {
+      margin-top: auto;
+      padding: 20px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: #2a3040;
+    }
+
+    @media (max-width: 500px) {
+      .show-header { flex-direction: column; }
+      .show-poster, .show-poster-placeholder { width: 100%; min-width: unset; height: 200px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📺 Var kan jag streama?</h1>
+  <p>Sök efter en serie och se var du kan titta i Sverige</p>
+</header>
+
+<div id="api-banner">
+  <span>🔑</span>
+  <span>TMDB API-nyckel (<a href="https://www.themoviedb.org/settings/api" target="_blank">gratis här</a>):</span>
+  <input type="text" id="apiKeyInput" placeholder="Klistra in din API-nyckel här..." />
+</div>
+
+<div class="search-wrap">
+  <input type="text" id="searchInput" placeholder="Sök på en serie, t.ex. Succession, Breaking Bad..." autocomplete="off" />
+  <span class="search-icon">🔍</span>
+</div>
+
+<div id="suggestions"></div>
+
+<div id="loading">
+  <div class="loader"></div>
+  <div>Söker streaminginfo...</div>
+</div>
+
+<div id="result"></div>
+
+<footer>
+  Data från <a href="https://www.themoviedb.org" target="_blank" style="color:#4a5568">TMDb</a> &amp; JustWatch &mdash; Streaminginfo gäller för Sverige 🇸🇪
+</footer>
+
+<script>
+  const searchInput = document.getElementById('searchInput');
+  const suggestionsEl = document.getElementById('suggestions');
+  const resultEl = document.getElementById('result');
+  const loadingEl = document.getElementById('loading');
+  const apiKeyInput = document.getElementById('apiKeyInput');
+
+  const savedKey = localStorage.getItem('tmdb_key');
+  if (savedKey) apiKeyInput.value = savedKey;
+
+  apiKeyInput.addEventListener('change', () => {
+    localStorage.setItem('tmdb_key', apiKeyInput.value.trim());
+  });
+
+  function getKey() {
+    return apiKeyInput.value.trim() || localStorage.getItem('tmdb_key') || '';
+  }
+
+  let debounceTimer;
+
+  searchInput.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    const q = searchInput.value.trim();
+    if (q.length < 2) { suggestionsEl.style.display = 'none'; return; }
+    debounceTimer = setTimeout(() => searchShows(q), 350);
+  });
+
+  searchInput.addEventListener('keydown', e => {
+    if (e.key === 'Escape') suggestionsEl.style.display = 'none';
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-wrap') && !e.target.closest('#suggestions'))
+      suggestionsEl.style.display = 'none';
+  });
+
+  async function searchShows(query) {
+    const key = getKey();
+    if (!key) { alert('Ange en TMDB API-nyckel först!'); return; }
+    try {
+      const res = await fetch(
+        `https://api.themoviedb.org/3/search/tv?query=${encodeURIComponent(query)}&api_key=${key}&language=sv-SE&page=1`
+      );
+      if (!res.ok) {
+        if (res.status === 401) alert('Ogiltig API-nyckel. Kontrollera din TMDB-nyckel.');
+        return;
+      }
+      const data = await res.json();
+      renderSuggestions(data.results.slice(0, 7));
+    } catch (err) { console.error(err); }
+  }
+
+  function renderSuggestions(shows) {
+    if (!shows.length) { suggestionsEl.style.display = 'none'; return; }
+    suggestionsEl.innerHTML = shows.map(s => {
+      const year = s.first_air_date ? s.first_air_date.slice(0, 4) : '–';
+      const poster = s.poster_path
+        ? `<img src="https://image.tmdb.org/t/p/w92${s.poster_path}" alt="${s.name}">`
+        : `<div class="sug-poster-placeholder">🎬</div>`;
+      return `
+        <div class="suggestion-item" data-id="${s.id}">
+          ${poster}
+          <div>
+            <div class="sug-title">${s.name}</div>
+            <div class="sug-year">${year}${s.origin_country?.length ? ' · ' + s.origin_country.join(', ') : ''}</div>
+          </div>
+        </div>`;
+    }).join('');
+    suggestionsEl.style.display = 'block';
+    suggestionsEl.querySelectorAll('.suggestion-item').forEach(el => {
+      el.addEventListener('click', () => {
+        searchInput.value = el.querySelector('.sug-title').textContent;
+        suggestionsEl.style.display = 'none';
+        loadShow(el.dataset.id);
+      });
+    });
+  }
+
+  async function loadShow(id) {
+    const key = getKey();
+    resultEl.style.display = 'none';
+    loadingEl.style.display = 'block';
+    try {
+      const [detailsRes, providersRes] = await Promise.all([
+        fetch(`https://api.themoviedb.org/3/tv/${id}?api_key=${key}&language=sv-SE`),
+        fetch(`https://api.themoviedb.org/3/tv/${id}/watch/providers?api_key=${key}`)
+      ]);
+      const details = await detailsRes.json();
+      const providersData = await providersRes.json();
+      renderResult(details, providersData.results?.SE || null);
+    } catch (err) { console.error(err); }
+    finally { loadingEl.style.display = 'none'; }
+  }
+
+  function renderResult(show, providers) {
+    const poster = show.poster_path
+      ? `<img class="show-poster" src="https://image.tmdb.org/t/p/w300${show.poster_path}" alt="${show.name}">`
+      : `<div class="show-poster-placeholder">🎬</div>`;
+
+    const year = show.first_air_date ? show.first_air_date.slice(0, 4) : '–';
+    const genres = show.genres?.map(g => g.name).join(', ') || '–';
+    const overview = show.overview || 'Ingen beskrivning tillgänglig.';
+
+    const categories = [
+      { key: 'flatrate', label: '✅ Ingår i prenumeration' },
+      { key: 'free',     label: '🆓 Gratis' },
+      { key: 'ads',      label: '📺 Gratis med reklam' },
+      { key: 'rent',     label: '💸 Hyrs' },
+      { key: 'buy',      label: '🛒 Köps' },
+    ];
+
+    let streamHtml = '';
+    if (!providers) {
+      streamHtml = `<div class="no-stream"><span class="emoji">😔</span>Inga streamingalternativ hittades för Sverige.</div>`;
+    } else {
+      const sections = categories
+        .filter(c => providers[c.key]?.length)
+        .map(c => `
+          <div class="stream-category">
+            <div class="stream-category-label">${c.label}</div>
+            <div class="provider-list">
+              ${providers[c.key].map(p => `
+                <div class="provider">
+                  <img src="https://image.tmdb.org/t/p/original${p.logo_path}" alt="${p.provider_name}" title="${p.provider_name}">
+                  <span>${p.provider_name}</span>
+                </div>`).join('')}
+            </div>
+          </div>`).join('');
+      streamHtml = sections || `<div class="no-stream"><span class="emoji">😔</span>Hittades inte på svenska streamingtjänster.</div>`;
+    }
+
+    const justWatchUrl = providers?.link || `https://www.justwatch.com/se/s%C3%B6k?q=${encodeURIComponent(show.name)}`;
+
+    resultEl.innerHTML = `
+      <div class="show-header">
+        ${poster}
+        <div class="show-meta">
+          <h2>${show.name}</h2>
+          <div class="year-genre">${year} &middot; ${genres}</div>
+          <p class="overview">${overview}</p>
+        </div>
+      </div>
+      <div class="stream-section">
+        <h3>🇸🇪 Tillgänglig i Sverige via</h3>
+        ${streamHtml}
+        <div style="margin-top:20px;text-align:right">
+          <a href="${justWatchUrl}" target="_blank" rel="noopener"
+            style="font-size:0.8rem;color:#a78bfa;text-decoration:none;opacity:0.7">
+            Visa på JustWatch →
+          </a>
+        </div>
+      </div>`;
+
+    resultEl.style.display = 'block';
+    resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+</script>
+
+</body>
+</html>
   <title>Populära Böcker i Sverige</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <style>
