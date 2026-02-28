@@ -42,8 +42,9 @@
     .hero h1 em { font-style:normal; background:linear-gradient(90deg,#a855f7,#06d6a0); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
     .hero p { color:var(--muted); font-size:1.05rem; margin-bottom:32px; position:relative; }
 
+    .search-container { position:relative; max-width:580px; margin:0 auto; }
     .search-wrap {
-      display:flex; max-width:580px; margin:0 auto; position:relative;
+      display:flex; position:relative;
       background:rgba(255,255,255,.06); border:1.5px solid rgba(168,85,247,.35);
       border-radius:50px; overflow:hidden; transition:border-color .2s, box-shadow .2s;
     }
@@ -55,6 +56,23 @@
       color:#fff; font-weight:700; font-size:.9rem; cursor:pointer; transition:opacity .2s; white-space:nowrap;
     }
     .search-wrap button:hover { opacity:.85; }
+    .suggestions {
+      display:none; position:absolute; top:calc(100% + 8px); left:0; right:0;
+      background:#1c1a38; border:1px solid rgba(168,85,247,.3); border-radius:16px;
+      overflow:hidden; z-index:300; box-shadow:0 16px 48px rgba(0,0,0,.85);
+    }
+    .suggestions.open { display:block; }
+    .sug-item {
+      padding:11px 20px; cursor:pointer;
+      display:flex; align-items:center; gap:12px;
+      transition:background .1s; border-bottom:1px solid rgba(255,255,255,.04);
+    }
+    .sug-item:last-child { border-bottom:none; }
+    .sug-item:hover, .sug-item.focused { background:rgba(168,85,247,.18); }
+    .sug-title { font-size:.88rem; font-weight:600; flex:1; }
+    .sug-title em { color:#c084fc; font-style:normal; }
+    .sug-year { font-size:.72rem; color:var(--muted); white-space:nowrap; }
+    .sug-pills { display:flex; gap:3px; flex-shrink:0; }
 
     /* ── FILTER BAR ── */
     .filter-bar { display:flex; gap:8px; flex-wrap:wrap; max-width:1380px; margin:28px auto 0; padding:0 24px; }
@@ -143,9 +161,12 @@
 <div class="hero">
   <h1>Var kan du <em>streama</em> det?</h1>
   <p>Sök på en serie – se direkt vilka plattformar som erbjuder den i Sverige.</p>
-  <div class="search-wrap">
-    <input id="search-input" type="text" placeholder="T.ex. Breaking Bad, Succession, Ted Lasso…" autocomplete="off" />
-    <button onclick="runSearch()">Sök</button>
+  <div class="search-container">
+    <div class="search-wrap">
+      <input id="search-input" type="text" placeholder="T.ex. Breaking Bad, Succession, Ted Lasso…" autocomplete="off" />
+      <button onclick="runSearch()">Sök</button>
+    </div>
+    <div id="suggestions" class="suggestions"></div>
   </div>
 </div>
 
@@ -347,12 +368,70 @@ const SHOWS = [
 
 let activePlatform = 'all';
 
+let sugFocused = -1;
+
 document.addEventListener('DOMContentLoaded', () => {
   renderGrid(document.getElementById('main-grid'), SHOWS);
-  document.getElementById('search-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') runSearch();
+  const inp = document.getElementById('search-input');
+  const box = document.getElementById('suggestions');
+
+  inp.addEventListener('input', () => { sugFocused = -1; showSuggestions(inp.value); });
+
+  inp.addEventListener('keydown', e => {
+    const items = box.querySelectorAll('.sug-item');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      sugFocused = Math.min(sugFocused + 1, items.length - 1);
+      items.forEach((el, i) => el.classList.toggle('focused', i === sugFocused));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      sugFocused = Math.max(sugFocused - 1, -1);
+      items.forEach((el, i) => el.classList.toggle('focused', i === sugFocused));
+    } else if (e.key === 'Enter') {
+      if (sugFocused >= 0 && items[sugFocused]) {
+        inp.value = items[sugFocused].dataset.title;
+        hideSuggestions();
+      }
+      runSearch();
+    } else if (e.key === 'Escape') {
+      hideSuggestions();
+    }
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.search-container')) hideSuggestions();
   });
 });
+
+function showSuggestions(val) {
+  const q = val.trim().toLowerCase();
+  const box = document.getElementById('suggestions');
+  if (!q) { hideSuggestions(); return; }
+  const hits = SHOWS.filter(s => s.title.toLowerCase().includes(q)).slice(0, 7);
+  if (!hits.length) { hideSuggestions(); return; }
+  const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+  box.innerHTML = hits.map(s => {
+    const highlighted = esc(s.title).replace(re, '<em>$1</em>');
+    const pills = s.platforms.slice(0,2).map(p => '<span class="platform-pill ' + getPlatCls(p) + '">' + esc(p) + '</span>').join('');
+    return '<div class="sug-item" data-title="' + esc(s.title) + '" onclick="pickSuggestion(this)">'  
+      + '<div class="sug-title">' + highlighted + '</div>'
+      + '<span class="sug-year">' + s.year + '</span>'
+      + '<div class="sug-pills">' + pills + '</div>'
+      + '</div>';
+  }).join('');
+  box.classList.add('open');
+}
+
+function hideSuggestions() {
+  document.getElementById('suggestions').classList.remove('open');
+  sugFocused = -1;
+}
+
+function pickSuggestion(el) {
+  document.getElementById('search-input').value = el.dataset.title;
+  hideSuggestions();
+  runSearch();
+}
 
 function getPlatCls(p) { return (PLATFORMS[p] || {}).cls || ''; }
 
